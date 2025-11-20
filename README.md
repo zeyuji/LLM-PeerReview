@@ -16,6 +16,15 @@ Example project pages built using this template are:
 - https://vision.huji.ac.il/ssrl_ad
 - https://vision.huji.ac.il/deepsim
 
+## Categories
+
+- Abstract
+- （Introduction / Motivation）
+- Overview of LLM-PeerReview（Method Overview）
+- Experiment Setup
+- Results
+- BibTeX
+
 
 
 ## Start using the template
