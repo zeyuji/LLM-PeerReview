@@ -373,7 +373,7 @@
   </div>
 </section>
 
-<section class="section hero">
+<!-- <section class="section hero">
     <div class="container is-max-desktop">
       <div class="hero-body">
           <h1 class="title is-3 has-text-centered">Overview of LLM-PeerReview</h1>
@@ -390,7 +390,7 @@
           </h2>
       </div>
     </div>
-  </section>
+  </section> -->
 
 
 <!-- FRE Stage -->
@@ -436,21 +436,67 @@
       
       <p>From these tables and figures, we observe the following findings:</p>
       <!-- <ol style="padding-left: 3em;"> -->
+      <!-- <ol>
+        <li>
+          <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> 
+          As shown in Table 1, both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. 
+          In the average performance, our two variant methods (67.4% and 67.8%) 
+          surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, 
+          and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%.
+        </li>
+        <li>
+          <strong>Each LLM has its strengths and weaknesses.</strong> 
+          Figure 3 shows that models with the best overall performance may underperform on specific tasks compared to those with weaker overall results. 
+          This highlights that a strong LLM does not excel across all datasets, emphasizing the practical significance of LLM Ensemble.
+        </li>
+        <li>
+          <strong>Aggregating multiple judges is crucial.</strong> 
+          Our variants using single LLMs as judges perform well, but aggregating scores from multiple judges provides clear benefits. 
+          Furthermore, the weighted truth inference in LLM-PeerReview-Weighted leads to additional performance gains compared to simple averaging, 
+          as it effectively identifies stronger and weaker judges through learned transition matrices.
+        </li>
+        <li>
+          <strong>The flipped-triple scoring trick represents a performance-efficiency trade-off.</strong> 
+          As shown in Table 2, variants quadruple-half, flipped-triple, and double 
+          all offer noticeable de-biasing performance advantages over the single-scoring strategy, 
+          with flipped-triple achieving the best balance between performance and computational efficiency.
+        </li>
+        <li>
+          <strong>Common scoring levels can generally be attempted.</strong> 
+          Figure 5 shows that our method exhibits slightly varying performance across different scoring levels (3, 5, 7, and 10), 
+          with no consistent tendencies, indicating robustness to scoring granularity.
+        </li>
+      </ol> -->
+
       <ol>
         <li>
-          <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> As shown in Table 1, both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. In the average performance, our two variant methods (67.4% and 67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%.
+          <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> 
+          Both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. 
+          In the average performance, our two variant methods (67.4% and 67.8%) 
+          surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, 
+          and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%.
         </li>
         <li>
-          <strong>Each LLM has its strengths and weaknesses.</strong> Figure 3 shows that models with the best overall performance may underperform on specific tasks compared to those with weaker overall results. This highlights that a strong LLM does not excel across all datasets, emphasizing the practical significance of LLM Ensemble.
+          <strong>Each LLM has its strengths and weaknesses.</strong> 
+          Our analysis reveals that models with the best overall performance may underperform on specific tasks compared to those with weaker overall results. 
+          This highlights that a strong LLM does not excel across all datasets, emphasizing the practical significance of LLM Ensemble.
         </li>
         <li>
-          <strong>Aggregating multiple judges is crucial.</strong> Our variants using single LLMs as judges perform well, but aggregating scores from multiple judges provides clear benefits. Furthermore, the weighted truth inference in LLM-PeerReview-Weighted leads to additional performance gains compared to simple averaging, as it effectively identifies stronger and weaker judges through learned transition matrices.
+          <strong>Aggregating multiple judges is crucial.</strong> 
+          Our variants using single LLMs as judges perform well, but aggregating scores from multiple judges provides clear benefits. 
+          Furthermore, the weighted truth inference in LLM-PeerReview-Weighted leads to additional performance gains compared to simple averaging, 
+          as it effectively identifies stronger and weaker judges through learned transition matrices.
         </li>
         <li>
-          <strong>The flipped-triple scoring trick represents a performance-efficiency trade-off.</strong> As shown in Table 2, variants quadruple-half, flipped-triple, and double all offer noticeable de-biasing performance advantages over the single-scoring strategy, with flipped-triple achieving the best balance between performance and computational efficiency.
+          <strong>The flipped-triple scoring trick represents a performance-efficiency trade-off.</strong> 
+          Our evaluation of different scoring strategies shows that variants quadruple-half, flipped-triple, and double 
+          all offer noticeable de-biasing performance advantages over the single-scoring strategy, 
+          with flipped-triple achieving the best balance between performance and computational efficiency.
         </li>
         <li>
-          <strong>Common scoring levels can generally be attempted.</strong> Figure 5 shows that our method exhibits slightly varying performance across different scoring levels (3, 5, 7, and 10), with no consistent tendencies, indicating robustness to scoring granularity.
+          <strong>Common scoring levels can generally be attempted.</strong> 
+          Our analysis demonstrates that the method exhibits slightly varying performance across different scoring levels, 
+          with no consistent tendencies, indicating robustness to scoring granularity.
         </li>
       </ol>
 
@@ -490,8 +536,8 @@
   </div>
 </section>
 
-<!-- Experiment Setup -->
-<section class="hero is-small">
+<!-- CoS Experiment Setup -->
+<!-- <section class="hero is-small">
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Experiment Setup</h2>
@@ -512,10 +558,10 @@
       <img src="static/images/model-pair.png" alt="Model pair configuration" width="40%" class="center">
     </div>
   </div>
-</section>
+</section> -->
 
-<!-- Results -->
-<section class="hero is-small">
+<!-- CoS Results -->
+<!-- <section class="hero is-small">
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Results</h2>
@@ -534,28 +580,24 @@
 
       <div id="results-carousel" class="carousel results-carousel">
           <div class="item">
-              <!-- Your image here -->
               <img src="static/images/we-results.png" alt="The speedup ratio of each method in WE setting." width="30%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>The speedup ratio of each method in WE setting.</b></em> The method with the optimal speedup is highlighted in <b>bold</b>.
               </h2>
           </div>
           <div class="item">
-              <!-- Your image here -->
               <img src="static/images/we-raw.png" alt="The raw speed of each method under WE setting." width="55%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>The raw speed of each method under WE setting.</b></em> The table reports the average number of tokens generated per second. Models are of comparable sizes.
               </h2>
           </div>
           <div class="item">
-              <!-- Your image here -->
               <img src="static/images/cd-results.png" alt="The speedup ratio of each method in CD setting." width="40%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>The speedup ratio of each method in CD setting.</b></em>
               </h2>
           </div>
           <div class="item">
-              <!-- Your image here -->
               <img src="static/images/cd-raw.png" alt="The raw speed of each method under CD setting." width="40%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>The raw speed of each method under CD setting.</b></em> Models are of different sizes.
@@ -563,14 +605,14 @@
           </div>
       </div>
   </div>
-</section>
+</section> -->
 
 
 <!-- Paper poster -->
 <section class="hero is-small is-light">
 <div class="hero-body">
   <div class="container">
-    <h2 class="title">Overview</h2>
+    <h2 class="title">Poster</h2>
 
     <!-- <iframe src="static/pdfs/our-paper.pdf" width="100%" height="550"> -->
     <iframe src="static/pdfs/Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process.pdf" width="100%" height="550">
