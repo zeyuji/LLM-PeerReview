@@ -408,7 +408,7 @@
 </section> -->
 
 <!-- Experiment Setup -->
-<section class="hero is-small">
+<section class="hero is-small is-light">
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Experiment Setup</h2>
@@ -435,7 +435,8 @@
       <h2 class="title">Results</h2>
       
       <p>From these tables and figures, we observe the following findings:</p>
-      <ol style="padding-left: 3em;">
+      <!-- <ol style="padding-left: 3em;"> -->
+      <ol>
         <li>
           <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> As shown in Table 1, both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. In the average performance, our two variant methods (67.4% and 67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%.
         </li>
@@ -455,31 +456,31 @@
 
       <div id="results-carousel" class="carousel results-carousel">
           <div class="item">
-              <img src="static/images/table1.png" alt="Main experimental results" width="80%" class="center"/>
+              <img src="static/images/table1.png" alt="Main experimental results" width="60%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>Main experimental results.</b></em> The method with the optimal performance is highlighted in <b>bold</b>.
               </h2>
           </div>
           <div class="item">
-              <img src="static/images/fig3.png" alt="LLM performance analysis" width="65%" class="center"/>
+              <img src="static/images/fig3.png" alt="LLM performance analysis" width="30%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>LLM performance analysis.</b></em> Radar chart of individual LLM performance and win-tie-loss analysis demonstrating varying strengths across tasks.
               </h2>
           </div>
           <div class="item">
-              <img src="static/images/fig4.png" alt="Transition matrices and correlation analysis" width="70%" class="center"/>
+              <img src="static/images/fig4.png" alt="Transition matrices and correlation analysis" width="50%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>Transition matrices and correlation analysis.</b></em> Learned scoring behavior of each LLM and correlation with judging capability.
               </h2>
           </div>
           <div class="item">
-              <img src="static/images/table2.png" alt="Scoring strategies comparison" width="75%" class="center"/>
+              <img src="static/images/table2.png" alt="Scoring strategies comparison" width="55%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>Scoring strategies comparison.</b></em> Performance and computational efficiency of different scoring strategies.
               </h2>
           </div>
           <div class="item">
-              <img src="static/images/fig5.png" alt="Scoring levels analysis" width="60%" class="center"/>
+              <img src="static/images/fig5.png" alt="Scoring levels analysis" width="40%" class="center"/>
               <h2 class="subtitle has-text-centered">
                   <em><b>Scoring levels analysis.</b></em> Performance across different scoring granularities.
               </h2>
@@ -571,7 +572,8 @@
   <div class="container">
     <h2 class="title">Overview</h2>
 
-    <iframe src="static/pdfs/our-paper.pdf" width="100%" height="550">
+    <!-- <iframe src="static/pdfs/our-paper.pdf" width="100%" height="550"> -->
+    <iframe src="static/pdfs/Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process.pdf" width="100%" height="550">
     </iframe>
     
   </div>
@@ -691,15 +693,16 @@
 
 <!--BibTex citation -->
 <section class="section" id="BibTeX">
-<div class="container is-max-desktop content">
-  <h2 class="title">BibTeX</h2>
-  <pre><code>@inproceedings{fu2025speculative,
-  title={Fast Large Language Model Collaborative Decoding via Speculation},
-  author={Fu, Jiale and Jiang, Yuchu and Chen, Junkai and Fan, Jiaming and Geng, Xin and Yang, Xu},
-  booktitle={Forty-two International Conference on Machine Learning},
-  year={2025}
-}</code></pre>
-</div>
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+      <!-- <pre><code>@inproceedings{fu2025speculative,
+      title={Fast Large Language Model Collaborative Decoding via Speculation},
+      author={Fu, Jiale and Jiang, Yuchu and Chen, Junkai and Fan, Jiaming and Geng, Xin and Yang, Xu},
+      booktitle={Forty-two International Conference on Machine Learning},
+      year={2025}
+    }</code></pre> -->
+      <pre><code>TBD</code></pre>
+  </div>
 </section>
 <!--End BibTex citation -->
 
