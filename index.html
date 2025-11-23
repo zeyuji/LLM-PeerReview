@@ -412,6 +412,88 @@
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Experiment Setup</h2>
+      
+      <p><span class="paragraph-title">Datasets and evaluation.</span>
+      We evaluate four widely-used datasets, grouped into three categories: (1) Factual Recall: TriviaQA evaluates the accuracy of model responses to factual questions across various domains; (2) Arithmetic Reasoning: GSM8k and MATH assess basic arithmetic and more advanced mathematical reasoning, respectively, with accuracy as the evaluation metric; (3) Instruction Following: AlpacaEval tests models' ability to follow various instructions, using GPT-4o-mini to evaluate accuracy. All experiments were performed using 6 or 4 parallel Nvidia V100 32GB GPUs, with stochastic outputs conducted three times.
+      </p>
+      
+      <p><span class="paragraph-title">Seed LLMs and baselines.</span>
+      Considering 7B-scale models are widely used and generally regarded as having acceptable judging capabilities, we use four well-established 7B models for ensemble: Llama-3.1-8B-Instruct, Mistral-7B-Instruct, Qwen2-7B-Instruct, and Qwen2.5-7B-Instruct. We compare the proposed LLM-PeerReview with two categories of baselines: (1) Single LLMs: the four 7B-scale models; (2) LLM Ensemble baselines: Random selection, Smoothie-Global, Smoothie-Local, and Agent-Forest.
+      </p>
+      
+      <p><span class="paragraph-title">Configurations.</span>
+      For each individual LLM, we follow the setup where the model responds once to each query. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness. The scoring prompts used across the four datasets are provided in the Appendix.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Results</h2>
+      
+      <p>From these tables and figures, we observe the following findings:</p>
+      <ol style="padding-left: 3em;">
+        <li>
+          <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> As shown in Table 1, both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. In the average performance, our two variant methods (67.4% and 67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%.
+        </li>
+        <li>
+          <strong>Each LLM has its strengths and weaknesses.</strong> Figure 3 shows that models with the best overall performance may underperform on specific tasks compared to those with weaker overall results. This highlights that a strong LLM does not excel across all datasets, emphasizing the practical significance of LLM Ensemble.
+        </li>
+        <li>
+          <strong>Aggregating multiple judges is crucial.</strong> Our variants using single LLMs as judges perform well, but aggregating scores from multiple judges provides clear benefits. Furthermore, the weighted truth inference in LLM-PeerReview-Weighted leads to additional performance gains compared to simple averaging, as it effectively identifies stronger and weaker judges through learned transition matrices.
+        </li>
+        <li>
+          <strong>The flipped-triple scoring trick represents a performance-efficiency trade-off.</strong> As shown in Table 2, variants quadruple-half, flipped-triple, and double all offer noticeable de-biasing performance advantages over the single-scoring strategy, with flipped-triple achieving the best balance between performance and computational efficiency.
+        </li>
+        <li>
+          <strong>Common scoring levels can generally be attempted.</strong> Figure 5 shows that our method exhibits slightly varying performance across different scoring levels (3, 5, 7, and 10), with no consistent tendencies, indicating robustness to scoring granularity.
+        </li>
+      </ol>
+
+      <div id="results-carousel" class="carousel results-carousel">
+          <div class="item">
+              <img src="static/images/table1.png" alt="Main experimental results" width="80%" class="center"/>
+              <h2 class="subtitle has-text-centered">
+                  <em><b>Main experimental results.</b></em> The method with the optimal performance is highlighted in <b>bold</b>.
+              </h2>
+          </div>
+          <div class="item">
+              <img src="static/images/fig3.png" alt="LLM performance analysis" width="65%" class="center"/>
+              <h2 class="subtitle has-text-centered">
+                  <em><b>LLM performance analysis.</b></em> Radar chart of individual LLM performance and win-tie-loss analysis demonstrating varying strengths across tasks.
+              </h2>
+          </div>
+          <div class="item">
+              <img src="static/images/fig4.png" alt="Transition matrices and correlation analysis" width="70%" class="center"/>
+              <h2 class="subtitle has-text-centered">
+                  <em><b>Transition matrices and correlation analysis.</b></em> Learned scoring behavior of each LLM and correlation with judging capability.
+              </h2>
+          </div>
+          <div class="item">
+              <img src="static/images/table2.png" alt="Scoring strategies comparison" width="75%" class="center"/>
+              <h2 class="subtitle has-text-centered">
+                  <em><b>Scoring strategies comparison.</b></em> Performance and computational efficiency of different scoring strategies.
+              </h2>
+          </div>
+          <div class="item">
+              <img src="static/images/fig5.png" alt="Scoring levels analysis" width="60%" class="center"/>
+              <h2 class="subtitle has-text-centered">
+                  <em><b>Scoring levels analysis.</b></em> Performance across different scoring granularities.
+              </h2>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experiment Setup -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Experiment Setup</h2>
       <p><span class="paragraph-title">Dataset and evaluation.</span>
       We test CoS across multiple tasks including code generation, mathematical reasoning, multi-task understanding, and text summarization on HumanEval, GSM8K, MMLU, and CNNDM, respectively. We measure each method's speed by the average tokens generated per second and compute the speedup ratio relative to the standard collaborative decoding. All experiments are conducted on RTX 3090, except for evaluations involving the Llama-Vicuna model pair, which use the A6000 GPU.
       </p>
