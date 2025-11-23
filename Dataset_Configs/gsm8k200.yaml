@@ -1,0 +1,6 @@
+dataset: gsm8k200
+task_type: math
+max_new_tokens: 1024
+test_size: 200
+metrics:
+  - gsm8k_acc

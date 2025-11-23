@@ -1,0 +1,6 @@
+dataset: trivia_qa
+task_type: factual_recall
+max_new_tokens: 40
+test_size: 1000
+metrics:
+  - trivia_qa_acc

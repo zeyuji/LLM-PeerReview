@@ -1,0 +1,6 @@
+dataset: math400
+task_type: math
+max_new_tokens: 1024
+test_size: 400
+metrics:
+  - gsm8k_acc

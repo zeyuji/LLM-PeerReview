@@ -1,0 +1,6 @@
+dataset: alpaca3
+task_type: instruction_following
+max_new_tokens: 2048
+test_size: 805
+metrics:
+  - gpt_cmp

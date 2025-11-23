@@ -1,0 +1,6 @@
+dataset: alpaca_200_shuffle
+task_type: instruction_following
+max_new_tokens: 2048
+test_size: 200
+metrics:
+  - gpt_cmp

@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">LLM-PeerReview (AAAI-2026)</h1>
+  <h1 align="center">LLM-PeerReview</h1>
 
 
 
@@ -7,7 +7,7 @@
 
 We propose LLM-PeerReview, an unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths.
 
-At present, the method is specifically applied to the **GSM8K** dataset, which is a widely used dataset in the field of mathematics and question answering. However, we have plans to expand the scope of this project in the future. In subsequent versions of the GitHub repository, we will release a more comprehensive version that supports four datasets:
+This version supports four datasets:
 
 - **TriviaQA**: A dataset for question answering that covers a broad range of trivia questions.
 - **GSM8K**: A dataset focused on mathematics question answering, with a special emphasis on problems requiring complex reasoning.
