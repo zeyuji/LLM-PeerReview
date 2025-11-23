@@ -408,7 +408,7 @@
 </section> -->
 
 <!-- Experiment Setup -->
-<section class="hero is-small is-light">
+<!-- <section class="hero is-small is-light">
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Experiment Setup</h2>
@@ -423,6 +423,40 @@
       
       <p><span class="paragraph-title">Configurations.</span>
       For each individual LLM, we follow the setup where the model responds once to each query. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness. The scoring prompts used across the four datasets are provided in the Appendix.
+      </p>
+    </div>
+  </div>
+</section> -->
+
+<!-- Experiment Setup -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Experiment Setup</h2>
+      
+      <p><span class="paragraph-title">Datasets and evaluation.</span>
+      We evaluate four widely-used datasets, grouped into three categories:
+      <strong>(1) Factual Recall:</strong> TriviaQA evaluates the accuracy of model responses to factual questions across various domains, including history, science, and geography.
+      <strong>(2) Arithmetic Reasoning:</strong> GSM8k and MATH assess basic arithmetic and more advanced mathematical reasoning, respectively, with accuracy as the evaluation metric, focusing on correct numerical answers.
+      <strong>(3) Instruction Following:</strong> AlpacaEval tests models' ability to follow various instructions. We use GPT-4o-mini to evaluate the accuracy of model responses, assessing whether the model's response exceeds the reference answer in the dataset.
+      </p>
+      
+      <p><span class="paragraph-title">Seed LLMs for ensemble.</span>
+      Considering 7B-scale models are widely used by researchers and generally regarded as having acceptable judging capabilities, we use these well-established 7B models for ensemble: Llama-3.1-8B-Instruct, Mistral-7B-Instruct, Qwen2-7B-Instruct, and Qwen2.5-7B-Instruct.
+      </p>
+      
+      <p><span class="paragraph-title">Baselines.</span>
+      We compare the proposed LLM-PeerReview with two categories of baselines.
+      <strong>(1) Single LLMs:</strong> The four 7B-scale models mentioned before.
+      <strong>(2) LLM Ensemble baselines:</strong> 
+      (<em>i</em>) Random is a random-selection baseline that simply returns the response from a randomly chosen LLM in the ensemble. As one of the simplest ensemble strategies for large language models, this method has previously been applied to dialogue tasks;
+      (<em>ii</em>) Smoothie-Global, Smoothie-Local, and Agent-Forest are recently proposed, strong similarity-based ensemble methods, as introduced in detail in Section 1.
+      </p>
+      
+      <p><span class="paragraph-title">Configurations.</span>
+      (1) For each individual large language model, we follow the setup of Smoothie, where the model responds once to each query. The responses from all models are stored for integration by the LLM Ensemble methods. (All LLM responses will also be open-sourced to promote reproducibility and further research.)
+      (2) For the two variants of the baseline Smoothie, we set the number of neighbors as specified in the original paper. Agent-Forest does not require any hyperparameter configuration. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness. Additionally, the scoring prompts used across the four datasets are provided in the Appendix.
+      (3) All experiments were performed using 6 or 4 parallel Nvidia V100 32GB GPUs. All experiments with stochastic outputs were conducted three times.
       </p>
     </div>
   </div>
