@@ -458,12 +458,12 @@
       <strong>(1) Single LLMs:</strong> The four 7B-scale models mentioned before.
       <strong>(2) LLM Ensemble baselines:</strong> 
       (<em>i</em>) Random is a random-selection baseline that simply returns the response from a randomly chosen LLM in the ensemble. As one of the simplest ensemble strategies for large language models, this method has previously been applied to dialogue tasks;
-      (<em>ii</em>) Smoothie-Global, Smoothie-Local, and Agent-Forest are recently proposed, strong similarity-based ensemble methods, as introduced in detail in Section 1.
+      (<em>ii</em>) Smoothie-Global, Smoothie-Local, and Agent-Forest are recently proposed, strong similarity-based ensemble methods.
       </p>
       
       <p><span class="paragraph-title">Configurations.</span>
       (1) For each individual large language model, we follow the setup of Smoothie, where the model responds once to each query. The responses from all models are stored for integration by the LLM Ensemble methods. (All LLM responses will also be open-sourced to promote reproducibility and further research.)
-      (2) For the two variants of the baseline Smoothie, we set the number of neighbors as specified in the original paper. Agent-Forest does not require any hyperparameter configuration. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness. Additionally, the scoring prompts used across the four datasets are provided in the Appendix.
+      (2) For the two variants of the baseline Smoothie, we set the number of neighbors as specified in the original paper. Agent-Forest does not require any hyperparameter configuration. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness.
       (3) All experiments were performed using 6 or 4 parallel Nvidia V100 32GB GPUs. All experiments with stochastic outputs were conducted three times.
       </p>
     </div>
@@ -476,6 +476,7 @@
     <div class="container">
       <h2 class="title">Results</h2>
       
+      <div class="content has-text-justified">
       <p>From these tables and figures, we observe the following findings:</p>
       <!-- <ol style="padding-left: 3em;"> -->
       <!-- <ol>
@@ -541,6 +542,7 @@
           with no consistent tendencies, indicating robustness to scoring granularity.
         </li>
       </ol>
+      </div>
 
       <div id="results-carousel" class="carousel results-carousel">
           <div class="item">
