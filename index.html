@@ -2,29 +2,32 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="Fast Large Language Model Collaborative Decoding via Speculation">
-  <meta property="og:title" content="Fast Large Language Model Collaborative Decoding via Speculation"/>
-  <meta property="og:description" content="A novel framework that accelerates collaborative decoding without compromising performance."/>
-  <meta property="og:url" content="https://yourwebsite.com/cos"/>
+  <meta name="description" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="keywords" content="Ensemble Learning, LLM Ensemble, Peer-Review Process">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process"/>
+  <meta property="og:description" content="LLM-PeerReview: An unsupervised LLM ensemble method that selects the best response via a peer-review inspired scoring and reasoning process."/>
+  <meta property="og:url" content="https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/cos-banner.png" />
+  <meta property="og:image" content="static/images/logo.png" />
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
-
-  <meta name="twitter:title" content="LMM-R1: Enhancing Multimodal Reasoning">
-  <meta name="twitter:description" content="Boosting 3B LMMs reasoning abilities through two-stage rule-based reinforcement learning">
+  <!-- Twitter -->
+  <meta name="twitter:title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="twitter:description" content="LLM-PeerReview: An unsupervised LLM ensemble method that selects the best response via a peer-review inspired scoring and reasoning process.">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/cos-banner.png">
+  <meta name="twitter:image" content="static/images/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="large langugae models, speculative decoding, model collaboration">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Fast Large Language Model Collaborative Decoding via Speculation</title>
+  <title>Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process</title>
   <!-- <link rel="icon" type="image/x-icon" href="static/images/favicon.ico"> -->
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -115,128 +118,132 @@
 </head>
 <body>
 
+<!-- Scroll to Top Button -->
+<button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
 
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            Scoring, Reasoning, and Selecting the Best!<br>
+            Ensembling Large Language Models via a Peer-Review Process</h1>
+          <div class="is-size-5 publication-authors">
+            <!-- Paper authors -->
+            <!-- <span class="author-block">
+                <a href="LINK" target="_blank">Zhijun Chen</a><sup>*</sup>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Zeyu Ji</a><sup>*</sup>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Qianren Mao</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Junhang Cheng</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Bangjie Qin</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Hao Wu</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Zhuorran Li</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Jingzheng Li</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Kai Sun</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Zizhe Wang</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Zhu Sun</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Xiangyang Ji</a>,
+            </span>
+            <span class="author-block">
+                <a href="LINK" target="_blank">Hailong Sun</a><sup>†</sup>
+            </span> -->
+            <span class="author-block">Zhijun Chen<sup>*</sup>,</span>
+            <span class="author-block">Zeyu Ji<sup>*</sup>,</span>
+            <span class="author-block">Qianren Mao,</span>
+            <span class="author-block">Junhang Cheng,</span>
+            <span class="author-block">Bangjie Qin,</span>
+            <span class="author-block">Hao Wu,</span>
+            <span class="author-block">Zhuorran Li,</span>
+            <span class="author-block">Jingzheng Li,</span>
+            <span class="author-block">Kai Sun,</span>
+            <span class="author-block">Zizhe Wang,</span>
+            <span class="author-block">Zhu Sun,</span>
+            <span class="author-block">Xiangyang Ji,</span>
+            <span class="author-block">Hailong Sun<sup>†</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Beihang University, Beijing, China</span><br>
+            <span class="eql-cntrb"><small><sup>*</sup>Equal Contribution. <sup>†</sup>Corresponding Author</small></span>
+          </div>
+
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">
-              Scoring, Reasoning, and Selecting the Best!<br>
-              Ensembling Large Language Models via a Peer-Review Process</h1>
-            <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
-              <!-- <span class="author-block">
-                  <a href="LINK" target="_blank">Zhijun Chen</a><sup>*</sup>,
+            <div class="publication-links">
+              <!-- Arxiv PDF link -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
               </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Zeyu Ji</a><sup>*</sup>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Qianren Mao</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Junhang Cheng</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Bangjie Qin</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Hao Wu</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Zhuorran Li</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Jingzheng Li</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Kai Sun</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Zizhe Wang</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Zhu Sun</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Xiangyang Ji</a>,
-              </span>
-              <span class="author-block">
-                  <a href="LINK" target="_blank">Hailong Sun</a><sup>†</sup>
+
+              <!-- Supplementary material PDF -->
+              <!-- <span class="link-block">
+                <a href="static/pdfs/supplementary_material.pdf" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Supplementary</span>
+                </a>
               </span> -->
-              <span class="author-block">Zhijun Chen<sup>*</sup>,</span>
-              <span class="author-block">Zeyu Ji<sup>*</sup>,</span>
-              <span class="author-block">Qianren Mao,</span>
-              <span class="author-block">Junhang Cheng,</span>
-              <span class="author-block">Bangjie Qin,</span>
-              <span class="author-block">Hao Wu,</span>
-              <span class="author-block">Zhuorran Li,</span>
-              <span class="author-block">Jingzheng Li,</span>
-              <span class="author-block">Kai Sun,</span>
-              <span class="author-block">Zizhe Wang,</span>
-              <span class="author-block">Zhu Sun,</span>
-              <span class="author-block">Xiangyang Ji,</span>
-              <span class="author-block">Hailong Sun<sup>†</sup></span>
-            </div>
 
-            <div class="is-size-5 publication-authors">
-              <span class="author-block">Beihang University, Beijing, China</span><br>
-              <span class="eql-cntrb"><small><sup>*</sup>Equal Contribution. <sup>†</sup>Corresponding Author</small></span>
-            </div>
+              <!-- GitHub repository URL -->
+              <span class="link-block">
+                <a href="https://github.com/zeyuji/LLM-PeerReview" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
 
-            <div class="column has-text-centered">
-              <div class="publication-links">
-                <!-- Arxiv PDF link -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                    </span>
-                    <span>Paper</span>
-                  </a>
-                </span>
-
-                <!-- Supplementary material PDF -->
-                <!-- <span class="link-block">
-                  <a href="static/pdfs/supplementary_material.pdf" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                    </span>
-                    <span>Supplementary</span>
-                  </a>
-                </span> -->
-
-                <!-- GitHub repository URL -->
-                <span class="link-block">
-                  <a href="https://github.com/zeyuji/LLM-PeerReview" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code</span>
-                  </a>
-                </span>
-
-                <!-- arXiv link -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                    </span>
-                    <span>arXiv</span>
-                  </a>
-                </span>
-              </div>
+              <!-- arXiv link -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 
 <!-- Teaser video-->
