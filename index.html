@@ -287,14 +287,15 @@
             The two variants of the proposed approach obtain new state-of-the-art results across four datasets, including outperforming the recent advanced model Smoothie-Global by 6.9% and 7.3% points, respectively.
           </p> -->
           <p>
-            We propose LLM-PeerReview, an unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths.
+            TBD
+            <!-- We propose LLM-PeerReview, an unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths.
             LLM-PeerReview is built on a novel, peer-review-inspired framework that offers a clear and interpretable mechanism, while remaining fully unsupervised for flexible adaptability and generalization.
             Specifically, LLM-PeerReview operates in three stages:
             For <em>scoring</em>, we use the emerging LLM-as-a-Judge technique to evaluate each response by reusing multiple LLMs at hand;
             For <em>reasoning</em>, we can apply a principled graphical model-based truth inference algorithm or a straightforward averaging strategy to aggregate multiple scores to produce a final score for each response;
             Finally, the highest-scoring response is selected as the ensemble output.
             LLM-PeerReview is conceptually simple and empirically powerful. 
-            The two variants of the proposed approach obtain new state-of-the-art results across four datasets, including outperforming the recent advanced model Smoothie-Global by 6.9% and 7.3% points, respectively.
+            The two variants of the proposed approach obtain new state-of-the-art results across four datasets, including outperforming the recent advanced model Smoothie-Global by 6.9% and 7.3% points, respectively. -->
           </p>
         </div>
       </div>
@@ -362,7 +363,8 @@
       </div> -->
 
       <div class="content has-text-justified">
-        <p>The proposed LLM-PeerReview contains three steps:</p>
+        TBD
+        <!-- <p>The proposed LLM-PeerReview contains three steps:</p>
         
         <ol>
           <li>
@@ -374,7 +376,7 @@
           <li>
             <strong>Selecting the best</strong>: Finally, for each query, LLM-PeerReview selects the response with the highest final score as the ensemble output—analogous to how a senior reviewer chooses the best paper from a specific submission pool.
           </li>
-        </ol>
+        </ol> -->
       </div>
 
       <!-- <iframe width="90%" height="675" class="center" style="margin-top: 1em;" src="https://www.youtube.com/embed/faLySXcU2DE?si=kLbdu0HECWLshR0t" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
@@ -442,8 +444,12 @@
   <div class="hero-body">
     <div class="container">
       <h2 class="title">Experiment Setup</h2>
-      
+
       <p><span class="paragraph-title">Datasets and evaluation.</span>
+      TBD
+      </p>
+      
+      <!-- <p><span class="paragraph-title">Datasets and evaluation.</span>
       We evaluate four widely-used datasets, grouped into three categories:
       <strong>(1) Factual Recall:</strong> TriviaQA evaluates the accuracy of model responses to factual questions across various domains, including history, science, and geography.
       <strong>(2) Arithmetic Reasoning:</strong> GSM8k and MATH assess basic arithmetic and more advanced mathematical reasoning, respectively, with accuracy as the evaluation metric, focusing on correct numerical answers.
@@ -466,7 +472,7 @@
       (1) For each individual large language model, we follow the setup of Smoothie, where the model responds once to each query. The responses from all models are stored for integration by the LLM Ensemble methods. (All LLM responses will also be open-sourced to promote reproducibility and further research.)
       (2) For the two variants of the baseline Smoothie, we set the number of neighbors as specified in the original paper. Agent-Forest does not require any hyperparameter configuration. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness.
       (3) All experiments were performed using 6 or 4 parallel Nvidia V100 32GB GPUs. All experiments with stochastic outputs were conducted three times.
-      </p>
+      </p> -->
     </div>
   </div>
 </section>
@@ -512,7 +518,7 @@
         </li>
       </ol> -->
 
-      <ol>
+      <!-- <ol>
         <li>
           <strong>The ensemble of the proposed LLM-PeerReview is effective.</strong> 
           Both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. 
@@ -542,10 +548,10 @@
           Our analysis demonstrates that the method exhibits slightly varying performance across different scoring levels, 
           with no consistent tendencies, indicating robustness to scoring granularity.
         </li>
-      </ol>
+      </ol> -->
       </div>
 
-      <div id="results-carousel" class="carousel results-carousel">
+      <!-- <div id="results-carousel" class="carousel results-carousel">
           <div class="item">
               <img src="static/images/table1.png" alt="Main experimental results" width="75%" class="center"/>
               <h2 class="subtitle has-text-centered">
@@ -576,7 +582,7 @@
                   <em><b>Scoring levels analysis.</b></em> Performance across different scoring granularities.
               </h2>
           </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>
@@ -654,18 +660,17 @@
 
 
 <!-- Paper poster -->
-<section class="hero is-small is-light">
+<!-- <section class="hero is-small is-light">
 <div class="hero-body">
   <div class="container">
     <h2 class="title">Poster</h2>
 
-    <!-- <iframe src="static/pdfs/our-paper.pdf" width="100%" height="550"> -->
     <iframe src="static/pdfs/Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process.pdf" width="100%" height="550">
     </iframe>
     
   </div>
 </div>
-</section>
+</section> -->
 <!--End paper poster -->
 
 
