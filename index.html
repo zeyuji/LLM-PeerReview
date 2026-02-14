@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="keywords" content="Ensemble Learning, LLM Ensemble, Peer-Review Process">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process"/>
+  <meta property="og:description" content="LLM-PeerReview: An unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths."/>
+  <meta property="og:url" content="https://zeyuji.github.io/LLM-PeerReview/">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/images/logo.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+  <!-- Twitter -->
+  <meta name="twitter:title" content="Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process">
+  <meta name="twitter:description" content="LLM-PeerReview: An unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths.">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+
+
+  <title>Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process</title>
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- MathJax for rendering mathematical formulas -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  
+    <style>
+      /* Tab content styles */
+      .tab-pane {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .tab-pane.is-active {
+        display: block;
+        opacity: 1;
+      }
+      
+      /* Make sure the notification boxes have consistent height */
+      .notification {
+        min-height: 200px;
+        overflow-y: auto;
+        max-height: 500px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        line-height: 1.5;
+        font-size: 0.9em;
+      }
+      
+      /* Loading indicator */
+      .loading {
+        text-align: center;
+        padding: 20px;
+        font-style: italic;
+        color: #888;
+      }
+      
+      /* Math formula styles */
+      .mjx-chtml {
+        display: inline-block;
+        margin: 2px 0;
+      }
+      
+      /* Ensure inline math doesn't break line height */
+      .mjx-chtml.MJXc-display {
+        margin: 1em 0;
+        padding: 0.5em 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      
+      /* Improve readability of math in dark notification boxes */
+      .notification .mjx-chtml {
+        color: #333;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .paragraph-title {
+        font-weight: bold;
+        margin-right: 0.5em;
+      }
+
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            Scoring, Reasoning, and Selecting the Best!<br>
+            Ensembling Large Language Models via a Peer-Review Process</h1>
+          <div class="is-size-5 publication-authors">
+            <!-- Paper authors -->
+            <span class="author-block">
+                <a href="https://zhijunchen-ai.github.io/" target="_blank">Zhijun Chen</a><sup>†</sup>,
+            </span>
+            <span class="author-block">
+                <a href="https://github.com/zeyuji" target="_blank">Zeyu Ji</a><sup>†</sup>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=PnDqlPkAAAAJ&hl=zh-CN" target="_blank">Qianren Mao</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://openreview.net/profile?id=%7EHao_Wu55" target="_blank">Hao Wu</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=DOqGLmEAAAAJ&hl=zh-CN" target="_blank">Junhang Cheng</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://zeyuji.github.io/LLM-PeerReview/" target="_blank">Bangjie Qin</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://lizhuoran-nlp.github.io/" target="_blank">Zhuoran Li</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=6v6JfdsAAAAJ&hl=zh-CN" target="_blank">Jingzheng Li</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=buUlnJUAAAAJ&hl=zh-CN" target="_blank">Kai Sun</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=Tmjz3J0AAAAJ&hl=zh-CN&oi=sra" target="_blank">Zizhe Wang</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://www.banyikun.com/" target="_blank">Yikun Ban</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://sites.google.com/view/zhusun/home" target="_blank">Zhu Sun</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://www.thuidm.com/" target="_blank">Xiangyang Ji</a>,
+            </span>
+            <span class="author-block">
+                <a href="https://hsun2022.github.io/" target="_blank">Hailong Sun</a><sup>*</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Beihang University, Beijing, China</span><br>
+            <span class="eql-cntrb"><small><sup>†</sup>Equal Contribution. <sup>*</sup>Corresponding Author</small></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- Arxiv PDF link -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2512.23213" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <!-- GitHub repository URL -->
+              <span class="link-block">
+                <a href="https://github.com/zeyuji/LLM-PeerReview" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+
+              <!-- arXiv link -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2512.23213" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser video-->
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="static/images/teaser.gif" alt="CoS framework" width="100%">
+      <p>
+        CoS accelerates collaborative decoding through two key enhancement: (1) refining verification mechanism of speculative decoding(SD) to extend SD to collaborative decoding scenarios. (2) incorporate an alternate proposal framework to further boosting inference speed.
+      </p>
+    </div>
+  </div>
+</section> -->
+<!-- End teaser video -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <h2 class="title is-2">Abstract</h2>
+          <div style="height: 4px; width: 60px; background-color: #3273dc; margin: 10px auto 0 auto; border-radius: 2px;"></div>
+        </div>
+
+        <div class="content has-text-justified">
+          <p>
+            We propose LLM-PeerReview, an unsupervised LLM Ensemble method that selects the most ideal response from multiple LLM-generated candidates for each query, harnessing the collective wisdom of multiple models with diverse strengths.
+            LLM-PeerReview is built on a novel, peer-review-inspired framework that offers a clear and interpretable mechanism, while remaining fully unsupervised for flexible adaptability and generalization.
+            Specifically, it operates in three stages:
+            For <i>scoring</i>, we use the emerging LLM-as-a-Judge technique to evaluate each response by reusing multiple LLMs at hand;
+            For <i>reasoning</i>, we can apply a principled graphical model-based truth inference algorithm or a straightforward averaging strategy to aggregate multiple scores to produce a final score for each response;
+            Finally, the highest-scoring response is <i>selected</i> as the best ensemble output.
+            LLM-PeerReview is conceptually simple and empirically powerful. 
+            The two variants of the proposed approach obtain strong results across four datasets, including outperforming the recent advanced model Smoothie-Global by 6.9% and 7.3% points, respectively.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Overview of LLM-PeerReview -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="has-text-left" style="margin-bottom: 2rem;">
+      <h2 class="title is-2">Overview of LLM-PeerReview</h2>
+      <div style="height: 4px; width: 60px; background-color: #3273dc; margin-top: 10px;"></div>
+    </div>
+
+    <figure class="image" style="margin-bottom: 1rem;">
+      <img src="static/images/overview-LLM-PeerReview.png" alt="Overview of the LLM-PeerReview framework" style="width: 70%; display: block; margin: auto;">
+    </figure>
+
+    <div class="content has-text-justified">
+      <p>
+        The proposed LLM-PeerReview contains three steps:<br>
+        <strong>(1) Scoring</strong>: For a given query, after each LLM independently generates a response (analogous to a submitted academic paper), LLM-PeerReview applies the LLM-as-a-Judge technique (and the proposed flipped-triple scoring trick), treating each model as a reviewer to assign scores to all candidate responses;<br>
+        <strong>(2) Reasoning</strong>: LLM-PeerReview then uses a truth inference algorithm—analogous to a senior reviewer—to estimate a final score for each response. (Notably, for the variant LLM-PeerReview-Weighted, the inference algorithm is performed using score information across all queries, allowing the model to learn each LLM’s scoring behavior using global information from the dataset, thereby enabling fine-grained, reliability-aware score aggregation);<br>
+        <strong>(3) Selecting the best:</strong> Finally, for each query, LLM-PeerReview selects the response with the highest final score as the ensemble output—analogous to how a senior reviewer chooses the best paper from a specific submission pool.
+        </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Motivation/Introduction -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="has-text-left" style="margin-bottom: 1.5rem;">
+      <h2 class="title is-2">Motivation / Introduction</h2>
+      <div style="height: 4px; width: 60px; background-color: #3273dc; margin-top: 10px;"></div>
+    </div>
+
+    <div class="content has-text-justified">
+      <p style="margin-bottom: 1rem;">
+        The artificial intelligence domain has undergone a massive transformation recently, driven by the emergence of Large Language Models (LLMs) such as Gemini, GPT-4, Llama, and DeepSeek.
+        The success of these models has triggered a surge in research activity, with over 182,000 models now available on Hugging Face.
+      </p>
+
+      <p style="margin-bottom: 1rem;">
+        Behind this research enthusiasm, we can observe two main points:
+        1) <i>Persistent performance concerns</i>:
+        Although large language models can be easily deployed for zero-shot or in-context few-shot inference, they still face common performance issues, such as limited accuracy, hallucinations, and misalignment with human goals;
+        2) <i>The varying strengths and weaknesses of LLMs</i>: 
+        These models display significant behavioral differences, primarily driven by variations in their architecture, scale, training data, dictionary, tokenization and methodology. 
+        Consequently, their responses to the same prompt often diverge.
+        With the above two points in mind and inspired by the spirit of Ensemble Learning, it is reasonable to suggest that relying on a single LLM—even one with a high public ranking or other criteria—may not be the optimal strategy for every user query. Instead, it might be more advantageous to simultaneously consider multiple LLM candidates (which are usable out-of-the-box) and leverage their distinct strengths.
+        This concept is the core focus of the burgeoning field of LLM Ensemble.
+      </p>
+
+      <p style="margin-bottom: 1rem;">
+        As LLM Ensemble gains increasing attention, one well-established class of solutions—<i>ensemble-after-inference</i> (also known as <i>post-hoc ensemble</i>) methods—has emerged.
+        These methods include the following two representative approaches:
+        <ul>
+          <li><strong>Selection-then-regeneration approaches</strong> rely heavily on curated task-specific data and require fine-tuning additional models, which severely restricts their generalization and adaptability across different domains.</li>
+          <li><strong>Similarity-based selection approaches</strong> suffer from coarse-grained designs and naive strategies (e.g., using shallow metrics like BLEU), failing to fully utilize the deep semantic information required for optimal selection.</li>
+        </ul>
+      </p>
+
+      <p style="margin-bottom: 1rem;">
+        <strong>When we revisit this research problem, we ask the most fundamental question: <i>In the real world, how would humans select the most ideal text from a set of candidate texts?</i>  
+        Perhaps the most immediate and relatable real-world example is: the academic peer-review process. Motivated by this, we propose a new, fully unsupervised LLM Ensemble method called LLM-PeerReview.</strong>
+      </p>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Experiment Setup -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    
+    <div class="has-text-left" style="margin-bottom: 2rem;">
+      <h2 class="title is-2">Experiment Setup</h2>
+      <div style="height: 4px; width: 60px; background-color: #3273dc; margin-top: 10px;"></div>
+    </div>
+
+    <div class="content has-text-justified">
+      <p>
+        <span class="paragraph-title">Datasets and evaluation.</span>
+        We evaluate four widely-used datasets, grouped into three categories: 
+        <strong>(1) Factual Recall:</strong> TriviaQA evaluates the <i>accuracy</i> of model responses to factual questions across various domains, including history, science, and geography. 
+        <strong>(2) Arithmetic Reasoning:</strong> GSM8k and MATH assess basic arithmetic and more advanced mathematical reasoning, respectively, with <i>accuracy</i> as the evaluation metric, focusing on correct numerical answers. 
+        <strong>(3) Instruction Following:</strong> AlpacaEval tests models' ability to follow various instructions. We use GPT-4o-mini to evaluate the <i>accuracy</i> of model responses, assessing whether the model’s response exceeds the reference answer in the dataset.
+      </p>
+
+      <!-- <p>
+        <span class="paragraph-title">Seed LLMs for ensemble.</span>
+        Considering 7B-scale models are widely used by researchers and generally regarded as having acceptable judging capabilities, we use these well-established 7B models for ensemble: Llama-3.1-8B-Instruct, Mistral-7B-Instruct, Qwen2-7B-Instruct, and Qwen2.5-7B-Instruct. Furthermore, we employ the instruction-tuned versions of these models rather than their base counterparts. This choice allows us to leverage their instruction-following capabilities, which are essential for the LLM-as-a-judge tasks.
+      </p> -->
+
+      <p>
+        <span class="paragraph-title">Baselines.</span>
+        We compare the proposed LLM-PeerReview with the two categories of baselines. 
+        <strong>(1) Single LLMs:</strong> The four 7B-scale models, Llama-3.1-8B-Instruct, Mistral-7B-Instruct, Qwen2-7B-Instruct, and Qwen2.5-7B-Instruct. 
+        <strong>(2) LLM Ensemble baselines:</strong> 
+        (<i>i</i>) Random is a random-selection baseline that simply returns the response from a randomly chosen LLM in the ensemble. As one of the simplest ensemble strategies for large language models, this method has previously been applied to dialogue tasks; 
+        (<i>ii</i>) Smoothie-Global, Smoothie-Local, and Agent-Forest are recently proposed, strong similarity-based ensemble methods, as introduced in detail in Section 1; 
+        (<i>iii</i>) GaC is a representative <i>token-level ensemble-during-inference</i> approach. It constructs a unified vocabulary that merges the individual dictionaries of multiple LLMs. During inference, token sampling is performed by observing the output distributions from these models across the unified vocabulary.
+      </p>
+
+      <!-- <p>
+        <span class="paragraph-title">Configurations.</span>
+        (1) For each individual large language model, we follow the setup of Smoothie, where the model responds once to each query. The responses from all models are stored for integration by the LLM Ensemble methods. 
+        (2) For the two variants of the baseline Smoothie, we set the number of neighbors as specified in the original paper. Agent-Forest does not require any hyperparameter configuration. For our method, we set the model temperature to 0 during the scoring process to eliminate suboptimal results caused by randomness. Additionally, the scoring prompts used across the four datasets are provided in the Appendix. 
+        (3) All experiments were performed using 6 or 4 parallel Nvidia V100 32GB GPUs. All experiments with stochastic outputs were conducted three times.
+      </p> -->
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Results -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="has-text-left" style="margin-bottom: 1.5rem;">
+      <h2 class="title is-2">Results</h2>
+      <div style="height: 4px; width: 60px; background-color: #3273dc; margin-top: 10px;"></div>
+    </div>
+
+    <div class="content has-text-justified">
+      <p>Through comprehensive experiments, we reached the following conclusions:</p>
+    </div>
+
+    <div class="content">
+      <div class="accordion-container">
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>1. The ensemble of the proposed LLM-PeerReview is effective.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              Our results indicate that both of our variants consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. Specifically, regarding average performance, our two variant methods (with results of 67.4% and 67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform the strongest ensemble method, Smoothie-Global, by 6.9% and 7.3%. These results directly demonstrate the effectiveness of our method, as it achieves superior performance by integrating the collective knowledge of multiple models across factual-recall QA tasks, mathematical reasoning tasks, and instruction-following tasks. Additionally, the ensemble task across these four datasets is challenging, as the performance of the four LLMs varies significantly for each dataset. In contrast, ensembling four LLMs with similar performance would make it easier to achieve superior results compared to any single LLM.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>2. Each LLM has its strengths and weaknesses.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              Analysis of individual LLM performance (such as through radar charts or win-tie-loss comparisons on the challenging AlpacaEval dataset) highlights that models with the best overall performance may underperform on specific tasks compared to those with weaker overall results. In summary, our experimental data demonstrates that a strong LLM does not excel across all datasets. Each model has its strengths and weaknesses, highlighting the substantial practical significance of LLM Ensemble.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>3. Simply averaging the scores from multiple judges is also quite effective.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              When evaluating the performance of using a single LLM as a judge to select the optimal response, we observe that these variants perform quite well (surpassing the overall best model, Qwen2.5, in 3/4 cases). However, when comparing the performance of these variants with that of our prototype LLM-PeerReview-Average, it becomes clear that aggregating and averaging the scores from multiple judges is highly beneficial, compared to relying solely on the score of a single large model.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>4. The weighted truth inference has the potential for further performance improvement.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              We find that LLM-PeerReview-Weighted leads to further performance gains compared to simple averaging. Furthermore, subtle variations in the learned transition matrices for each model, combined with positive correlation coefficients observed in our analysis, demonstrate that our method can effectively identify stronger and weaker judges.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>5. The flipped-triple scoring trick represents a performance-efficiency trade-off.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              It is intuitive that, in addition to our recommended <i>flipped-triple scoring</i> method, several variant scoring methods could be employed. Overall, the performance of these four variants follows the order: <i>quadruple-half</i> &gt; <i>flipped-triple</i> &gt; <i>double</i> &gt; <i>single</i>. Variants quadruple-half, flipped-triple, and double all offer noticeable <i>de-biasing</i> performance advantages over the single-scoring strategy. On the other hand, in terms of theoretical computational complexity, the complexities for de-biased strategies double/flipped-triple/quadruple-half are O(J)/O(J²)/O(J)/O(J!), with strategy flipped-triple having the lowest computational complexity. Furthermore, regarding scoring efficiency, compared to strategies double and quadruple-half, strategy flipped-triple is the most time-efficient.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <strong>6. Common scoring levels can generally be attempted.</strong>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-body">
+              We conducted a further analysis of how different scoring levels influence the performance of both our method and the four individual scoring models. For each scoring level, we have carefully crafted meaningful descriptions and corresponding prompts. Using the basic variant LLM-PeerReview-Average for this analysis, our method exhibits slightly varying performance, showing no consistent tendencies across the levels of 3, 5, 7, and 10.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="results-carousel" class="carousel results-carousel" style="margin-top: 2rem;">
+      <div class="item">
+        <img src="static/images/table1.png" alt="Main experimental results" style="width: 100%; display: block; margin: auto;"/>
+        <h2 class="subtitle has-text-centered is-size-6" style="margin-top: 0.5rem; line-height: 1.2;">
+          <em><b>Main Results.</b></em> 
+          <!-- Comparisons showing our method (bold) outperforming baselines. -->
+        </h2>
+      </div>
+
+      <div class="item">
+        <img src="static/images/fig3.png" alt="LLM performance analysis" style="width: 60%; display: block; margin: auto;"/>
+        <h2 class="subtitle has-text-centered is-size-6" style="margin-top: 0.5rem; line-height: 1.2;">
+          <em><b>LLM performances.</b></em> (bottom: AlpacaEval)
+          <!-- <em><b>Performance Analysis.</b></em> Radar chart of individual model strengths and weaknesses. -->
+        </h2>
+      </div>
+
+      <div class="item">
+        <img src="static/images/fig4.png" alt="Transition matrices" style="width: 100%; display: block; margin: auto;"/>
+        <h2 class="subtitle has-text-centered is-size-6" style="margin-top: 0.5rem; line-height: 1.2;">
+          <em><b>
+            Left: The transition matrix of each LLM estimated by LLM-PeerReview-Weighted. 
+            Right: Correlation between matrix diagonal information of each LLM and its performance as a single judge.
+          </b></em>
+          (corresponding to "our variants").
+          <!-- <em><b>Transition Matrices.</b></em> Visualization of learned scoring behaviors for each LLM. -->
+        </h2>
+      </div>
+
+      <div class="item">
+        <img src="static/images/table2.png" alt="Scoring strategies" style="width: 100%; display: block; margin: auto;"/>
+        <h2 class="subtitle has-text-centered is-size-6" style="margin-top: 0.5rem; line-height: 1.2;">
+          <em><b>
+            Top: Performance of the base variant LLM-PeerReview-Average with different scoring strategies.
+            Bottom: Computation efficiency.
+          </b></em>
+          <!-- <em><b>Ablation Study.</b></em> Efficiency vs. Performance trade-offs of scoring strategies. -->
+        </h2>
+      </div>
+
+      <div class="item">
+        <img src="static/images/fig5.png" alt="Scoring levels" style="width: 80%; display: block; margin: auto;"/>
+        <h2 class="subtitle has-text-centered is-size-6" style="margin-top: 0.5rem; line-height: 1.2;">
+          <em><b>
+            Performance of various variants across different scoring levels.
+          </b></em>
+          <!-- <em><b>Sensitivity Analysis.</b></em> Robustness across different scoring granularities. -->
+        </h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Paper poster -->
+<!-- <section class="hero is-small is-light">
+<div class="hero-body">
+  <div class="container">
+    <h2 class="title">Poster</h2>
+
+    <iframe src="static/pdfs/Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process.pdf" width="100%" height="550">
+    </iframe>
+    
+  </div>
+</div>
+</section> -->
+<!--End paper poster -->
+
+<style>
+  /* Remove default button styles */
+  .accordion-header {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 1rem 0;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
+  
+  .accordion-header:hover {
+    background-color: #f9f9f9;
+  }
+
+  .accordion-header .icon {
+    margin-right: 0.5rem;
+    font-size: 0.8em;
+    color: #3273dc;
+    transition: transform 0.3s ease;
+  }
+
+  /* Rotates icon when active */
+  .accordion-header.active .icon {
+    transform: rotate(45deg);
+  }
+
+  /* Content hidden by default */
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .accordion-body {
+    padding: 0.5rem 1rem 1.5rem 2rem; /* Indented text */
+    color: #4a4a4a;
+    font-size: 1rem;
+    text-align: justify;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const accordions = document.querySelectorAll('.accordion-header');
+
+    accordions.forEach(acc => {
+      acc.addEventListener('click', function() {
+        // Toggle active class
+        this.classList.toggle('active');
+
+        // Toggle panel visibility
+        const panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    });
+  });
+</script>
+
+<!-- Add JavaScript for tab functionality -->
+<!-- <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tabs
+    const tabs = document.querySelectorAll('#example-tabs li');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    console.log('Tabs initialized:', tabs.length, 'tabs found');
+    
+    // Debug: Print all tabs and their active state
+    tabs.forEach(tab => {
+      console.log('Tab:', tab.getAttribute('data-target'), 
+                 'Active:', tab.classList.contains('is-active'));
+    });
+    
+    // Debug: Print all panes and their active state
+    tabPanes.forEach(pane => {
+      console.log('Pane:', pane.id, 
+                 'Active:', pane.classList.contains('is-active'),
+                 'Display:', window.getComputedStyle(pane).display);
+    });
+    
+    // Add click event to each tab
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Get target tab pane ID
+        const targetId = this.getAttribute('data-target');
+        console.log('Tab clicked:', targetId);
+        
+        // Deactivate all tabs and tab panes
+        document.querySelectorAll('#example-tabs li.is-active').forEach(t => t.classList.remove('is-active'));
+        document.querySelectorAll('.tab-pane.is-active').forEach(p => p.classList.remove('is-active'));
+        
+        // Activate clicked tab and corresponding pane
+        this.classList.add('is-active');
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) {
+          targetPane.classList.add('is-active');
+          console.log('Activated pane:', targetId);
+          
+          // Re-render MathJax in the newly activated tab
+          if (window.MathJax) {
+            MathJax.typesetPromise([targetPane]).catch(err => console.error('MathJax error:', err));
+          }
+        } else {
+          console.error('Target pane not found:', targetId);
+        }
+      });
+    });
+    
+    // Load content from files
+    loadExampleContent();
+    
+    // Ensure MathJax is properly initialized
+    if (window.MathJax && typeof window.MathJax.typeset === 'function') {
+      window.MathJax.startup = {
+        ready: () => {
+          console.log('MathJax is loaded and ready');
+          MathJax.startup.defaultReady();
+        }
+      };
+    }
+  });
+  
+  // Function to load example content from files
+  function loadExampleContent() {
+    console.log('Loading example content from files');
+    
+    // Get all content containers
+    const contentContainers = document.querySelectorAll('[data-file]');
+    
+    // Load content for each container
+    contentContainers.forEach(container => {
+      const filePath = container.getAttribute('data-file');
+      console.log('Loading content from:', filePath);
+      
+      fetch(filePath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to load file: ${filePath}`);
+          }
+          return response.text();
+        })
+        .then(text => {
+          // Process text to properly format mathematical formulas
+          // Replace LaTeX-style formulas with MathJax compatible format
+          // Inline math: $formula$ -> \(formula\)
+          // Display math: $$formula$$ -> \[formula\]
+          const processedText = text
+            .replace(/\$\$(.*?)\$\$/g, '\\[$1\\]')  // Display math
+            .replace(/\$(.*?)\$/g, '\\($1\\)');     // Inline math
+          
+          // Set the content with HTML to preserve formatting
+          container.innerHTML = processedText;
+          
+          // Typeset the math in this specific container
+          if (window.MathJax) {
+            MathJax.typesetPromise([container]).catch(err => console.error('MathJax error:', err));
+          }
+        })
+        .catch(error => {
+          console.error('Error loading file:', error);
+          container.innerHTML = `<p class="has-text-danger">Error loading content: ${error.message}</p>`;
+        });
+    });
+  }
+</script> -->
+  
+
+<!--BibTex citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+      <pre><code>
+@misc{chen2025scoringreasoningselectingbest,
+      title={Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process}, 
+      author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun},
+      year={2025},
+      eprint={2512.23213},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2512.23213}, 
+}
+      </code></pre>
+  </div>
+</section>
+<!--End BibTex citation -->
+
+
+<footer class="footer">
+<div class="container">
+  <div class="columns is-centered">
+    <div class="column is-8">
+      <div class="content">
+
+        <p>
+          This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+          You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+          Commons Attribution-ShareAlike 4.0 International License</a>.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+</footer>
+
+</body>
+</html>
