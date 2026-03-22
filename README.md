@@ -4,9 +4,9 @@
   <a href='https://arxiv.org/abs/2512.23213'>
     <img src='https://img.shields.io/badge/Arxiv-2512.23213-b31b1b.svg?logo=arXiv'></a>
   <a href="https://zeyuji.github.io/LLM-PeerReview/">
-    <img src="https://img.shields.io/badge/🌐Website-Visit%20Now-purple" alt="Website"></a>
+    <img src="https://img.shields.io/badge/🌐%20Website-Visit%20Now-purple" alt="Website"></a>
   <a href="https://mp.weixin.qq.com/s/qqR5BW-TkHBaqPA5O-tWXw">
-    <img src="https://img.shields.io/badge/📑Blog-(Chinese)-orange" alt="Blog (Chinese)"></a>
+    <img src="https://img.shields.io/badge/📑%20Blog-(Chinese)-orange" alt="Blog (Chinese)"></a>
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zeyuji/LLM-PeerReview?style=social">
 </p>
 
