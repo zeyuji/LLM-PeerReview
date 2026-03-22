@@ -1,33 +1,35 @@
 <h1 align="center">LLM-PeerReview</h1>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2512.23213">
-  <img alt="Static Badge" src="https://img.shields.io/badge/arXiv-2512.23213-red"></a>
+  <a href='https://arxiv.org/abs/2512.23213'>
+    <img src='https://img.shields.io/badge/Arxiv-2512.23213-b31b1b.svg?logo=arXiv'></a>
   <a href="https://zeyuji.github.io/LLM-PeerReview/">
-  <img alt="Static Badge" src="https://img.shields.io/badge/🌐-Project_Page-purple"> </a>
+    <img src="https://img.shields.io/badge/🌐Website-Visit%20Now-purple" alt="Website"></a>
+  <a href="https://mp.weixin.qq.com/s/qqR5BW-TkHBaqPA5O-tWXw">
+    <img src="https://img.shields.io/badge/📑Blog-(Chinese)-orange" alt="Blog (Chinese)"></a>
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zeyuji/LLM-PeerReview?style=social">
 </p>
 
 ## ✨ Repository Highlights
 
-> 🔥 **Official Implementation of "Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process" (arXiv 2025)** 🔥
+> 🔥 **Official Implementation of "Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process" (arXiv 2025)**
 
-> ⭐ **This repository provides:**
+> 📌 **This repository provides:**
 > - 🌀 **Two variants of LLM-PeerReview:** LLM-PeerReview-Average & LLM-PeerReview-Weighted
-> - 📚 **Reproductions of recent LLM Ensemble baselines:** Random, GaC, Agent-Forest, Smoothie-Global and Smoothie-Local
+> - 📖 **Reproductions of recent LLM Ensemble baselines:** Random, GaC, Agent-Forest, Smoothie-Global and Smoothie-Local
 >   <details>
->   <summary><small>📖 Click to see references</small></summary>
+>   <summary><small>Click to see references</small></summary>
 >   
->   🎲 **Random:** [Lu et al., 2024](https://arxiv.org/abs/2401.02994) and [Guha et al., 2024](https://arxiv.org/abs/2412.04692)  
->   🧩 **GaC:** [Yu et al., 2024](https://arxiv.org/abs/2406.12585)  
->   🌲 **Agent-Forest:** [Li et al., 2024](https://arxiv.org/abs/2402.05120)  
->   🍹 **Smoothie-Global and Smoothie-Local:** [Guha et al., 2024](https://arxiv.org/abs/2412.04692)
+>   - **Random:** [Lu et al., 2024](https://arxiv.org/abs/2401.02994) and [Guha et al., 2024](https://arxiv.org/abs/2412.04692)  
+>   - **GaC:** [Yu et al., 2024](https://arxiv.org/abs/2406.12585)  
+>   - **Agent-Forest:** [Li et al., 2024](https://arxiv.org/abs/2402.05120)  
+>   - **Smoothie:** [Guha et al., 2024](https://arxiv.org/abs/2412.04692)
 >   </details>
-> - 🏆 **Evaluation on multiple benchmarks:** GSM8K, MATH, TriviaQA, and AlpacaEval
+> - 📊 **Evaluation on multiple benchmarks:** GSM8K, MATH, TriviaQA, and AlpacaEval
 
-> 📢 **Welcome to use! If you find this project helpful, please consider giving it a ⭐ star!** ✨
+> 📢 **Welcome to use! If you find this project helpful, please consider giving it a ⭐ star!**
 
-## Overview
+## 💡 Overview
 
 <div align="center">
     <img src="Images/overview-LLM-PeerReview.png" width="70%" alt="LLM-PeerReview Overview"/>
@@ -256,12 +258,12 @@ Evaluate the quality of the generated responses and the performance of different
   ```
 
 
-## 3. Citation
+## 📚 Citation
 ```bibtex
-@misc{chen2025scoringreasoningselectingbest,
+@misc{chen2026scoringreasoningselectingbest,
       title={Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process}, 
       author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun},
-      year={2025},
+      year={2026},
       eprint={2512.23213},
       archivePrefix={arXiv},
       primaryClass={cs.CL},
