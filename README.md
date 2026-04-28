@@ -262,7 +262,7 @@ Evaluate the quality of the generated responses and the performance of different
 ```bibtex
 @misc{chen2026scoringreasoningselectingbest,
       title={Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process}, 
-      author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun},
+      author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Jinhuan Song and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun},
       year={2026},
       eprint={2512.23213},
       archivePrefix={arXiv},
