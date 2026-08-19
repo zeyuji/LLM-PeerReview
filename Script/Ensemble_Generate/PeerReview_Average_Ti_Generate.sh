@@ -24,16 +24,16 @@ JUDGE_MODES=(
 )
 
 MAX_SCORES=(
-    "3"
-    # "5"
+    # "3"
+    "5"
     # "7"
     # "10"
 )
 
 TASK_TYPES=(
-    # "FACT"
+    "FACT"
     # "INST_v3"
-    "MATH"
+    # "MATH"
 )
 
 for DATASET in "${DATASETS[@]}"; do

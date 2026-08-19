@@ -21,8 +21,9 @@ from pathlib import Path
 from typing import List
 from tqdm import tqdm
 
-from Utils.peerreview_util import optimize_scores
+from Utils.peerreview_util import load_judge_score_matrix, optimize_scores
 from Utils.util import (
+    load_indices,
     load_model_group_response,
     load_data_config,
 )
@@ -39,7 +40,7 @@ parser.add_argument("--max_score", type=int, required=True, help="Maximum score 
 parser.add_argument(
     "--judge_mode", 
     type=str,
-    choices=["single", "multi", "double", "triple", "double_bias", "triple_bias", "multi_bias"],
+    choices=["single", "multi", "double", "triple", "triple_stride", "double_bias", "triple_bias", "multi_bias"],
     default="single",
     help="Prompt type for judging (single/multi/double/etc.)."
 )
@@ -61,6 +62,7 @@ def run_peerreview_average_opt(
     model_group_scale: str,
     model_group: List[str],
     max_score: int,
+    judge_mode: str,
     consider_prior: str,
     epoch: int,
     t: float,
@@ -83,40 +85,55 @@ def run_peerreview_average_opt(
     scores_dir = output_fpath.parent / "scores_matrices"
     scores_dir.mkdir(parents=True, exist_ok=True)
 
+    dataset_path = f"./Datasets/{data_config['dataset']}/test.jsonl"
+    test_indices = load_indices(dataset_path)
+    if int(data_config["test_size"]) != len(test_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(test_indices)} records"
+        )
+
     # Load generated outputs from all models
     test_generations = load_model_group_response(
         response_path=f"./LLM_Response/Test/{model_group_scale}",
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=test_indices,
     )
 
     n_models = len(test_generations)
     n_samples = len(test_generations[0])
-    
+    if len(test_indices) != n_samples:
+        raise ValueError(
+            f"Generation count ({n_samples}) does not match dataset idx count ({len(test_indices)})"
+        )
     n_judges = n_models
-    wo_model_idx = 100  # Index of the model to exclude as a judge
 
     # Score tensor: [num_samples, num_models, num_judges]
     all_scores = np.zeros((n_samples, n_models, n_judges), dtype=np.float32)
 
     # Load precomputed score matrices for each judge model
     for judge_idx in tqdm(range(n_models), desc="Scoring with judge models"):
-        if judge_idx == wo_model_idx: # without one model
-            print(f"Skipping judge model at index {wo_model_idx}")
-            continue
-
         judge_name = model_group[judge_idx]
         judge_name_safe = judge_name.replace("/", "_")
         json_filename = scores_dir / f"judge_{judge_name_safe}_seed_{seed}.json"
 
         if json_filename.exists():
-            with open(json_filename, 'r') as f:
-                data = json.load(f)
-            if judge_idx < wo_model_idx:
-                all_scores[:, :, judge_idx] = np.array(data["scores"])
-            else:
-                all_scores[:, :, judge_idx-1] = np.array(data["scores"])
+            all_scores[:, :, judge_idx] = load_judge_score_matrix(
+                json_filename,
+                expected_shape=(n_samples, n_models),
+                expected_fields={
+                    "judge_model": judge_name,
+                    "samples": n_samples,
+                    "generators": model_group,
+                    "dataset": data_config["dataset"],
+                    "seed": seed,
+                    "judge_mode": judge_mode,
+                    "max_score": max_score,
+                    "sample_indices": test_indices,
+                },
+            )
         else:
             raise FileNotFoundError(f"Missing score file: {json_filename}. Please generate it first.")
 
@@ -133,12 +150,18 @@ def run_peerreview_average_opt(
     )
 
     # Save optimized score matrix
-    optimized_scores_filename = scores_dir / f"optimized_scores_seed_{seed}.json"
+    optimized_scores_filename = scores_dir / f"optimized_scores_{consider_prior}_{epoch}_{t}_seed_{seed}.json"
     optimized_scores_json = {
         "metadata": {
             "seed": seed,
             "dataset": data_config["dataset"],
             "model_group": model_group,
+            "judge_models": model_group,
+            "judge_mode": judge_mode,
+            "max_score": max_score,
+            "consider_prior": consider_prior,
+            "epoch": epoch,
+            "t": t,
             "description": "Optimized scores using truth inference"
         },
         "scores": optimized_array.tolist()
@@ -165,10 +188,10 @@ def run_peerreview_average_opt(
         {
             "task_name": data_config["dataset"],
             "generation": generation,
-            "idx": idx,
+            "idx": sample_idx,
             "selected_model": int(selected_idx)
         }
-        for idx, (generation, selected_idx) in enumerate(zip(final_generations, best_model_indices))
+        for sample_idx, generation, selected_idx in zip(test_indices, final_generations, best_model_indices)
     ]
 
     print(f"Saving results to {output_fpath}")
@@ -194,6 +217,7 @@ def main(args: argparse.Namespace):
         model_group_scale=args.model_group_scale,
         model_group=model_groups[args.model_group_scale],
         max_score=int(args.max_score),
+        judge_mode=args.judge_mode,
         consider_prior=args.consider_prior,
         epoch=int(args.epoch),
         t=float(args.t),

@@ -9,6 +9,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, help="LLM to use")
 parser.add_argument("--device", default="cuda", type=str, help="Device to use")
 parser.add_argument(
+    "--device_map",
+    default="auto",
+    choices=["auto", "balanced", "balanced_low_0", "sequential"],
+    help="Hugging Face device map used when loading the model.",
+)
+parser.add_argument(
     "--dataset_config",
     type=str,
     help="Path to dataset config file. This should be a yaml file.",
@@ -60,7 +66,6 @@ parser.add_argument(
 )
 
 HF_MODEL_MAX_LENGTHS = {
-    # New 7B
     "./LLM_Models/New_7B/Meta-Llama-3.1-8B-Instruct": 8192,
     "./LLM_Models/New_7B/Mistral-7B-Instruct-v0.3": 32000,
     "./LLM_Models/New_7B/Qwen2-7B-Instruct": 32000,
@@ -72,13 +77,27 @@ def main(args: argparse.Namespace):
     Main Function
     """
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
+    if args.model not in HF_MODEL_MAX_LENGTHS:
+        raise ValueError(f"Model path is not registered in HF_MODEL_MAX_LENGTHS: {args.model}")
+    if args.n_generations <= 0:
+        raise ValueError(f"n_generations must be positive, got {args.n_generations}")
+    if args.temperature < 0:
+        raise ValueError(f"temperature must be non-negative, got {args.temperature}")
+    if not (0 < args.top_p <= 1):
+        raise ValueError(f"top_p must be in (0, 1], got {args.top_p}")
     data_path = construct_dataset_path(data_dir=args.data_dir, test_or_train=args.test_or_train)
     output_path = Path(args.results_dir + "/" + args.data_name)
     max_length = HF_MODEL_MAX_LENGTHS[args.model]
 
-    if args.n_generations > 1:
+    if args.temperature > 0:
         set_seed(args.seed)
-        assert args.temperature != 0
+    if args.n_generations > 1:
+        if args.temperature == 0:
+            raise ValueError("temperature must be non-zero when n_generations > 1")
 
     generate_predictions(
         model_name=args.model,
@@ -90,6 +109,10 @@ def main(args: argparse.Namespace):
         output_fpath=output_path,
         temperature=args.temperature,
         top_p=args.top_p,
+        device_map=args.device_map,
+        seed=args.seed,
+        expected_n_samples=data_config.get(f"{args.test_or_train}_size"),
+        split_name=args.test_or_train,
     )
 
 

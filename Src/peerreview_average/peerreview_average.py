@@ -19,11 +19,11 @@ import json
 
 # Custom utility imports
 from Utils.util import (
+    load_indices,
     load_model_group_response, 
-    load_reference,
-    load_multi_model_prompt,
     load_data_config
 )
+from Utils.peerreview_util import load_judge_score_matrix
 from Utils.constants import (
     MODEL_GROUPS,
 )
@@ -37,7 +37,7 @@ parser.add_argument("--seed", type=int, help="Random seed for selection.")
 parser.add_argument(
     "--prompt_template",
     type=str,
-    choices=["single", "multi", "double", "triple", "double_bias", "triple_bias", "multi_bias"],
+    choices=["single", "multi", "double", "triple", "triple_stride", "double_bias", "triple_bias", "multi_bias"],
     default="single",
     help="Prompt template for scoring."
 )
@@ -65,42 +65,53 @@ def run_peerreview_average(
     scores_dir = output_fpath.parent / "scores_matrices"
     scores_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load generations, references, and prompts
+    dataset_path = f"./Datasets/{data_config['dataset']}/test.jsonl"
+    test_indices = load_indices(dataset_path)
+    if int(data_config["test_size"]) != len(test_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(test_indices)} records"
+        )
+
+    # Load generations and dataset indices
     test_generations = load_model_group_response(
         response_path=f"./LLM_Response/Test/{model_group_scale}",
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=test_indices,
     )
-    test_references = load_reference(f"./Datasets/{data_config['dataset']}/test.jsonl")
-    test_prompts = load_multi_model_prompt(f"./Datasets/{data_config['dataset']}/test.jsonl")
 
     n_models = len(test_generations)
     n_samples = len(test_generations[0])
-    
-    n_judges = n_models
-    wo_model_idx = 100
+    if len(test_indices) != n_samples:
+        raise ValueError(
+            f"Generation count ({n_samples}) does not match dataset idx count ({len(test_indices)})"
+        )
 
     # Initialize [samples, generators, judges]
-    all_scores = np.zeros((n_samples, n_models, n_judges), dtype=np.float32)
+    all_scores = np.zeros((n_samples, n_models, n_models), dtype=np.float32)
 
     # Score generations with each judge model
     for judge_idx in tqdm(range(n_models), desc="Scoring with judge models"):
-        if judge_idx == wo_model_idx: # without one model
-            print(f"Skipping judge model at index {wo_model_idx}")
-            continue
-
         judge_name = model_group[judge_idx]
         judge_name_safe = judge_name.replace("/", "_")
         json_filename = scores_dir / f"judge_{judge_name_safe}_seed_{seed}.json"
 
         if json_filename.exists():
-            with open(json_filename, 'r') as f:
-                data = json.load(f)
-            if judge_idx < wo_model_idx:
-                all_scores[:, :, judge_idx] = np.array(data["scores"])
-            else:
-                all_scores[:, :, judge_idx-1] = np.array(data["scores"])
+            all_scores[:, :, judge_idx] = load_judge_score_matrix(
+                json_filename,
+                expected_shape=(n_samples, n_models),
+                expected_fields={
+                    "judge_model": judge_name,
+                    "samples": n_samples,
+                    "generators": model_group,
+                    "dataset": data_config["dataset"],
+                    "seed": seed,
+                    "judge_mode": prompt_template,
+                    "sample_indices": test_indices,
+                },
+            )
         else:
             raise FileNotFoundError(f"Score file missing: {json_filename}. Please generate it first.")
 
@@ -110,6 +121,8 @@ def run_peerreview_average(
             "seed": seed,
             "dataset": data_config["dataset"],
             "model_group": model_group,
+            "judge_models": model_group,
+            "judge_mode": prompt_template,
             "dimensions": ["sample_idx", "generator_idx", "judge_idx"]
         },
         "scores": all_scores.tolist()
@@ -152,10 +165,10 @@ def run_peerreview_average(
         {
             "task_name": data_config["dataset"],
             "generation": text,
-            "idx": idx,
+            "idx": sample_idx,
             "selected_model": int(best_model_idx)
         }
-        for idx, (text, best_model_idx) in enumerate(zip(final_generations, best_model_indices))
+        for sample_idx, text, best_model_idx in zip(test_indices, final_generations, best_model_indices)
     ]
 
     with open(output_fpath, 'w', encoding='utf-8') as f:

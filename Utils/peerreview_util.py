@@ -1,8 +1,49 @@
 import re
+import json
 import numpy as np
+from pathlib import Path
 from typing import List
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+def load_judge_score_matrix(
+    score_path: Path,
+    expected_shape,
+    expected_fields=None,
+) -> np.ndarray:
+    """Loads a judge score cache and validates its shape and available metadata."""
+    with Path(score_path).open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    if "scores" not in payload:
+        raise ValueError(f"Score cache is missing the scores field: {score_path}")
+    scores = np.asarray(payload["scores"], dtype=np.float32)
+    if scores.shape != tuple(expected_shape):
+        raise ValueError(
+            f"Unexpected score shape in {score_path}: {scores.shape}, expected {tuple(expected_shape)}"
+        )
+    if not np.all(np.isfinite(scores)):
+        raise ValueError(f"Score cache contains NaN or Inf: {score_path}")
+    if np.any(scores < 1):
+        raise ValueError(f"Score cache contains values below 1: {score_path}")
+
+    cached_max_score = payload.get("max_score")
+    if cached_max_score is not None:
+        if isinstance(cached_max_score, bool) or not isinstance(cached_max_score, (int, float)):
+            raise ValueError(f"Invalid max_score metadata in {score_path}: {cached_max_score!r}")
+        if not np.isfinite(cached_max_score) or cached_max_score < 1 or np.any(scores > cached_max_score):
+            raise ValueError(
+                f"Score cache contains values outside [1, {cached_max_score}]: {score_path}"
+            )
+
+    for field, expected_value in (expected_fields or {}).items():
+        if field in payload and payload[field] != expected_value:
+            raise ValueError(
+                f"Score cache metadata mismatch in {score_path}: {field}={payload[field]!r}, "
+                f"expected {expected_value!r}"
+            )
+    return scores
 
 def get_LLM_response(
     model: AutoModelForCausalLM,
@@ -150,7 +191,14 @@ def calculate_final_distribution(P: List[float], T: float) -> List[float]:
         exp_logits = np.exp(logits - np.max(logits))  # For numerical stability
         return exp_logits / np.sum(exp_logits)
 
-    logits = np.log(P)  # Convert to logits
+    if T <= 0:
+        raise ValueError(f"Temperature T must be positive, got {T}")
+    probabilities = np.asarray(P)
+    if probabilities.ndim != 1 or not np.all(np.isfinite(probabilities)) or np.any(probabilities < 0):
+        raise ValueError(f"Invalid probability distribution: {P}")
+    if probabilities.sum() <= 0:
+        raise ValueError(f"Probability distribution has no positive mass: {P}")
+    logits = np.log(probabilities)  # Convert to logits
     logits_scaled = logits / T  # Apply temperature scaling
     return softmax(logits_scaled)
 
@@ -180,6 +228,19 @@ def optimize_scores(
         np.ndarray: Optimized score array.
     """
     from Utils.inference_class import Inference_Wuzhangai
+
+    expected_shape = (n_samples, n_models, n_judges)
+    scores_array = np.asarray(scores_array, dtype=np.float32)
+    if scores_array.shape != expected_shape:
+        raise ValueError(f"scores_array has shape {scores_array.shape}, expected {expected_shape}")
+    if not np.all(np.isfinite(scores_array)):
+        raise ValueError("scores_array contains NaN or Inf")
+    if np.any(scores_array < 1) or np.any(scores_array > max_score):
+        raise ValueError(f"scores_array values must be in [1, {max_score}]")
+    if epoch <= 0:
+        raise ValueError(f"epoch must be positive, got {epoch}")
+    if t <= 0:
+        raise ValueError(f"t must be positive, got {t}")
 
     annotations = {}
     for i in range(n_samples):
@@ -214,5 +275,3 @@ def optimize_scores(
             optimized_array[i, j] = expected_score
 
     return optimized_array
-
-

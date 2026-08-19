@@ -56,6 +56,7 @@ for DATASET in "${DATASETS[@]}"; do
                     --results_dir "${BASE_RESULTS_DIR}/${TASK_TYPE}/${JUDGE_MODE}_${MAX_SCORE}" \
                     --model_group_scale "${MODEL_GROUP_SCALE}" \
                     --seed "${SEED}" \
+                    --prompt_template "${JUDGE_MODE}"
                 
                 echo ""
             done

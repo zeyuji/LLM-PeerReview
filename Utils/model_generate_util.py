@@ -7,9 +7,83 @@ import jsonlines
 import torch
 import gc
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Sequence, Tuple
 from tqdm.auto import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
+
+
+def validate_generation_dataset_size(
+    dataset: Sequence[Dict],
+    expected_n_samples: int,
+    split_name: str,
+    data_path: str,
+) -> None:
+    if isinstance(expected_n_samples, bool) or not isinstance(expected_n_samples, int):
+        raise ValueError(f"Dataset config must define an integer {split_name}_size for {data_path}")
+    if expected_n_samples <= 0:
+        raise ValueError(f"{split_name}_size must be positive, got {expected_n_samples}")
+    if len(dataset) != expected_n_samples:
+        raise ValueError(
+            f"Dataset config {split_name}_size={expected_n_samples} does not match "
+            f"{len(dataset)} records in {data_path}"
+        )
+
+
+def get_generation_resume_position(
+    seed_files: Sequence[Path],
+    dataset: Sequence[Dict],
+    output_name: str,
+) -> int:
+    """Validates aligned seed files and returns the common completed prefix length."""
+    dataset_indices = []
+    for position, sample in enumerate(dataset):
+        missing = {"idx", "task_name", "multi_model_prompt"} - set(sample)
+        if missing:
+            raise ValueError(
+                f"Dataset record {position} is missing fields {sorted(missing)}: {output_name}"
+            )
+        dataset_indices.append(sample["idx"])
+    if len(dataset_indices) != len(set(dataset_indices)):
+        raise ValueError(f"Dataset contains duplicate idx values: {output_name}")
+
+    all_records = []
+    for seed_file in seed_files:
+        if not seed_file.exists():
+            all_records.append([])
+            continue
+        with jsonlines.open(seed_file) as reader:
+            all_records.append(list(reader.iter()))
+
+    existing_counts = [len(records) for records in all_records]
+    if len(set(existing_counts)) != 1:
+        raise ValueError(
+            f"Inconsistent existing line counts across seed files: {existing_counts}. "
+            f"Please clean or fix {output_name} before resuming generation."
+        )
+
+    existing_lines = existing_counts[0]
+    if existing_lines > len(dataset):
+        raise ValueError(
+            f"Existing line count ({existing_lines}) exceeds dataset size ({len(dataset)}). "
+            f"Please clean or fix {output_name} before resuming generation."
+        )
+
+    expected_indices = [sample.get("idx") for sample in dataset[:existing_lines]]
+    if any(idx is None for idx in expected_indices):
+        raise ValueError(f"Dataset records are missing idx values: {output_name}")
+    for seed_file, records in zip(seed_files, all_records):
+        for position, (record, expected_idx) in enumerate(zip(records, expected_indices)):
+            expected_task_name = dataset[position]["task_name"]
+            if (
+                not isinstance(record.get("generation"), str)
+                or record.get("idx") != expected_idx
+                or record.get("task_name") != expected_task_name
+            ):
+                raise ValueError(
+                    f"Existing generation prefix does not match the dataset at position {position}: "
+                    f"{seed_file}"
+                )
+    return existing_lines
 
 
 def generate_predictions(
@@ -22,6 +96,10 @@ def generate_predictions(
     output_fpath: Path,
     temperature: float = 0.0,
     top_p: float = 1.0,
+    device_map: str = "auto",
+    seed: int = 42,
+    expected_n_samples: int = None,
+    split_name: str = "test",
 ):
     """
     Generates predictions for a dataset using a pretrained model and saves them to separate directories for each seed.
@@ -36,15 +114,19 @@ def generate_predictions(
         output_fpath (Path): Directory to save the generated outputs.
         temperature (float, optional): Sampling temperature for generation. Defaults to 0.0 (deterministic).
         top_p (float, optional): Top-p value for nucleus sampling. Defaults to 1.0.
+        device_map (str, optional): Hugging Face device placement strategy. Defaults to "auto".
     """
 
-    # Check if the results file already exists and determine how many lines have been generated
-    existing_lines = 0
-    if output_fpath.exists():
-        existing_lines = len((output_fpath / "Seed-1" / "seed_1.jsonl").read_text().splitlines())
-        print(f"Results file {output_fpath} exists. Existing lines: {existing_lines}")
-    else:
-        print(f"Will save results to: {output_fpath}")
+    if n_generations <= 0:
+        raise ValueError(f"n_generations must be positive, got {n_generations}")
+    if max_new_tokens <= 0:
+        raise ValueError(f"max_new_tokens must be positive, got {max_new_tokens}")
+    if max_length <= 0:
+        raise ValueError(f"max_length must be positive, got {max_length}")
+    if temperature < 0:
+        raise ValueError(f"temperature must be non-negative, got {temperature}")
+    if not (0 < top_p <= 1):
+        raise ValueError(f"top_p must be in (0, 1], got {top_p}")
 
     # Create subdirectories for each seed/generation
     output_fpath.mkdir(parents=True, exist_ok=True)
@@ -55,14 +137,27 @@ def generate_predictions(
     # Load the dataset
     with jsonlines.open(data_path) as file:
         dataset = list(file.iter())
+    validate_generation_dataset_size(dataset, expected_n_samples, split_name, data_path)
+
+    seed_files = [seed_dir / f"seed_{seed_idx}.jsonl" for seed_idx, seed_dir in enumerate(seed_dirs, start=1)]
+    existing_lines = get_generation_resume_position(seed_files, dataset, str(output_fpath))
 
     # Skip if all data has been processed
     if existing_lines == len(dataset):
         print(f"Results already processed. Skipping.")
         return
 
+    if existing_lines > 0:
+        print(f"Resuming generation from line {existing_lines} for {output_fpath}")
+    else:
+        print(f"Will save results to: {output_fpath}")
+
     # Load the model and tokenizer
-    model, tokenizer = load_hf_model(model_name=model_name, device=device)
+    model, tokenizer = load_hf_model(
+        model_name=model_name,
+        device=device,
+        device_map=device_map,
+    )
 
     # Set up generation parameters based on temperature and top_p
     if temperature == 0.0:
@@ -77,14 +172,17 @@ def generate_predictions(
         }
 
     # Initialize progress bar for dataset processing
-    progress_bar = tqdm(dataset[existing_lines:], desc="Generating outputs")
+    remaining_dataset = dataset[existing_lines:]
+    progress_bar = tqdm(remaining_dataset, desc="Generating outputs")
 
-    for sample in dataset[existing_lines:]:
+    for sample_position, sample in enumerate(remaining_dataset, start=existing_lines):
         prompt = sample["multi_model_prompt"]
         task_name = sample["task_name"]
         idx = sample["idx"]
 
         # Generate texts for the current sample
+        if gen_params["do_sample"]:
+            set_seed(seed + sample_position)
         texts = generate_per_sample_single_prompt(
             max_new_tokens=max_new_tokens,
             device=device,
@@ -180,6 +278,7 @@ def get_generation_output(input: Dict, output: Dict) -> List[str]:
 def load_hf_model(
     model_name: str,
     device: str = "cuda",
+    device_map: str = "auto",
 ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     """
     Loads a pretrained Hugging Face model and tokenizer.
@@ -195,9 +294,11 @@ def load_hf_model(
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         trust_remote_code=True,
-        device_map="auto",
+        device_map=device_map,
         torch_dtype=torch.float16,
     )
+    if device_map != "auto":
+        print(f"Loaded model with device_map={device_map}: {getattr(model, 'hf_device_map', {})}")
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         truncation_side="left",

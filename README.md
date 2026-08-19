@@ -16,7 +16,7 @@
 
 > 📌 **This repository provides:**
 > - 🌀 **Two variants of LLM-PeerReview:** LLM-PeerReview-Average & LLM-PeerReview-Weighted
-> - 📖 **Reproductions of recent LLM Ensemble baselines:** Random, GaC, Agent-Forest, Smoothie-Global and Smoothie-Local
+> - 📖 **Reproductions of recent LLM Ensemble baselines:** Random, GaC, Agent-Forest, Smoothie-Global, Smoothie-Local, Multi-Agent Debate (MAD), SAFE, and CoRE
 >   <details>
 >   <summary><small>Click to see references</small></summary>
 >   
@@ -24,6 +24,9 @@
 >   - **GaC:** [Yu et al., 2024](https://arxiv.org/abs/2406.12585)  
 >   - **Agent-Forest:** [Li et al., 2024](https://arxiv.org/abs/2402.05120)  
 >   - **Smoothie:** [Guha et al., 2024](https://arxiv.org/abs/2412.04692)
+>   - **MAD:** [Du et al., 2023](https://arxiv.org/abs/2305.14325)
+>   - **SAFE:** [Yun et al., 2026](https://arxiv.org/abs/2510.15346)
+>   - **CoRE:** [Zeng et al., 2025](https://arxiv.org/abs/2510.13855)
 >   </details>
 > - 📊 **Evaluation on multiple benchmarks:** GSM8K, MATH, TriviaQA, and AlpacaEval
 
@@ -131,6 +134,12 @@ bash ./Script/run_baseline.sh --method LLM-PeerReview-Average --dataset TriviaQA
 # Run Random baseline on GSM8k (short options)
 bash ./Script/run_baseline.sh -m Random -d GSM8k
 
+# Run MAD on GSM8k
+bash ./Script/run_baseline.sh --method MAD --dataset GSM8k
+
+# Run CoRE-UniTE-RBF on TriviaQA
+bash ./Script/run_baseline.sh --method CoRE-UniTE-RBF --dataset TriviaQA
+
 # Show all available options (-h or --help)
 bash ./Script/run_baseline.sh --help
 ```
@@ -140,7 +149,8 @@ bash ./Script/run_baseline.sh --help
 
 | Category | Options |
 | --- | --- |
-| **Baselines** | `Random`, `Smoothie-Global`, `Smoothie-Local`, `Agent-Forest`, `GaC` |
+| **Baselines** | `Random`, `Smoothie-Global`, `Smoothie-Local`, `Agent-Forest`, `GaC`, `MAD`, `SAFE-GaC-Heur`, `SAFE-UniTE-Heur`, `CoRE-GaC-RBF`, `CoRE-UniTE-RBF` |
+| **Model Selection** | `Single-Model`, `Single-Model-Judge` |
 | **Proposed (Ours)** | `LLM-PeerReview-Average`, `LLM-PeerReview-Weighted` |
 | **Datasets** | `GSM8k`, `MATH`, `TriviaQA`, `AlpacaEval` |
 
@@ -157,7 +167,15 @@ Generate responses from various LLMs on benchmark datasets:
   bash ./Script/Response_Generate/New_7B_Response_Generate.sh
   ```
 
+- **AlpacaEval Dataset**: Generate responses with the same four models using the AlpacaEval decoding settings.
+
+  ```bash
+  bash ./Script/Response_Generate/New_7B_Response_Generate_Alpaca.sh
+  ```
+
 **Output**: Generated responses are saved in the `LLM_Response/` directory with organized subfolders for each model and dataset.
+
+Models and datasets can be selected through the `MODELS` and `DATASETS` arrays in the corresponding script.
 
 ### 2.2 Response Scoring (PeerReview Method)
 
@@ -169,7 +187,21 @@ Score the generated responses using our PeerReview methodology. We provide scori
   bash ./Script/Response_Scoring/judge/judge_gsm8k400.sh
   ```
 
-**Note**: The scoring process leverages the LLM-as-a-Judge paradigm, where each available LLM acts as a reviewer to evaluate and assign scores to all candidate responses, forming the foundation for subsequent ensemble selection.
+- **MATH Dataset**:
+
+  ```bash
+  bash ./Script/Response_Scoring/judge/judge_math400.sh
+  ```
+
+- **TriviaQA Dataset**:
+
+  ```bash
+  bash ./Script/Response_Scoring/judge/judge_trivia_qa.sh
+  ```
+
+**Note**: The scoring process leverages the LLM-as-a-Judge paradigm, where each available LLM acts as a reviewer to evaluate and assign scores to all candidate responses, forming the foundation for subsequent ensemble selection. Judge models, judge modes, and score ranges can be selected in the corresponding script.
+
+The unified pipeline sets the dataset-specific scoring options automatically, including the AlpacaEval configuration.
 
 ### 2.3 Ensemble Methods
 
@@ -187,6 +219,16 @@ Combine multiple model responses using different ensemble strategies. We compare
   ```bash
   bash ./Script/Response_Generate/GaC_7B_Response_Generate.sh
   ```
+
+  GaC response generation runs through the separate server in `GaC/`. Use a separate environment for this service, install its dependencies, and start the server before running this script:
+
+  ```bash
+  cd GaC
+  pip install -r requirements.txt
+  python gac_api_server.py --config-path configs/new_7b_4_model.yaml --host 0.0.0.0 --port 8000
+  ```
+
+  The repository also includes pre-generated GaC responses, so the `GaC` option in `run_baseline.sh` evaluates those responses directly.
   </details>
 
 - <details><summary><strong>3) Agent Forest</strong>: A recently proposed similarity-based ensemble method.</summary>
@@ -207,13 +249,48 @@ Combine multiple model responses using different ensemble strategies. We compare
   ```
   </details>
 
-- **5) PeerReview Average (Ours)**: Our primary ensemble method which averages scores from multiple LLM judges.
+- <details><summary><strong>5) Multi-Agent Debate (MAD)</strong>: Models refine their responses using the other agents' responses over multiple debate rounds.</summary>
+
+  ```bash
+  bash ./Script/Ensemble_Generate/MAD_Generate.sh
+  ```
+
+  The provided script runs GSM8K and MATH and saves Round 0 followed by two debate rounds. The number of debate rounds is controlled by `N_DEBATE_ROUNDS`.
+  </details>
+
+- <details><summary><strong>6) SAFE</strong>: A speculative token-level ensemble method that uses a drafter and multiple verifier models.</summary>
+
+  ```bash
+  # GaC alignment with heuristic sharpening
+  bash ./Script/Ensemble_Generate/SAFE_Generate_GaC_Heur.sh
+
+  # UniTE alignment with heuristic sharpening
+  bash ./Script/Ensemble_Generate/SAFE_Generate_UniTE_Heur.sh
+  ```
+
+  SAFE profiles are defined in `Configs/safe/`. Datasets and GPU assignments can be changed through `DATASETS` and `DEVICE_IDS` in the generation scripts.
+  </details>
+
+- <details><summary><strong>7) CoRE</strong>: A consistency-aware token-level ensemble method with GaC or UniTE token alignment.</summary>
+
+  ```bash
+  # GaC alignment with consist-rbf weighting
+  bash ./Script/Ensemble_Generate/CoRE_GaC_Generate.sh
+
+  # UniTE alignment with consist-rbf weighting
+  bash ./Script/Ensemble_Generate/CoRE_UniTE_Generate.sh
+  ```
+
+  Use `CORE_DATASETS_CSV` and `CORE_DEVICES` to select datasets and GPU assignments.
+  </details>
+
+- **8) LLM-PeerReview-Average (Ours)**: Our primary ensemble method which averages scores from multiple LLM judges.
 
   ```bash
   bash ./Script/Ensemble_Generate/PeerReview_Average_Generate.sh
   ```
 
-- **6) PeerReview Average with Truth Inference (Ours)**: An enhanced variant that employs a graphical-model-based truth inference algorithm for reliability-aware score aggregation.
+- **9) LLM-PeerReview-Weighted (Ours)**: An enhanced variant that employs a graphical-model-based truth inference algorithm for reliability-aware score aggregation.
 
   ```bash
   bash ./Script/Ensemble_Generate/PeerReview_Average_Ti_Generate.sh
@@ -251,11 +328,34 @@ Evaluate the quality of the generated responses and the performance of different
   ```
   </details>
 
-- **5) PeerReview Ensemble Evaluation**: Evaluate the final outputs of our proposed PeerReview ensemble methods.
+- <details><summary><strong>5) MAD Evaluation</strong>: Evaluate the majority-vote result for each debate round.</summary>
+
+  ```bash
+  bash ./Script/Response_Evaluation/MAD_Response_Evaluate.sh
+  ```
+  </details>
+
+- <details><summary><strong>6) SAFE Evaluation</strong>: Evaluate outputs from the GaC-Heur and UniTE-Heur profiles.</summary>
+
+  ```bash
+  bash ./Script/Response_Evaluation/SAFE_Response_Evaluate.sh
+  ```
+  </details>
+
+- <details><summary><strong>7) CoRE Evaluation</strong>: Evaluate GaC/consist-rbf and UniTE/consist-rbf outputs.</summary>
+
+  ```bash
+  bash ./Script/Response_Evaluation/CoRE_Response_Evaluate.sh
+  ```
+  </details>
+
+- **8) PeerReview Ensemble Evaluation**: Evaluate the final outputs of our proposed PeerReview ensemble methods.
 
   ```bash
   bash ./Script/Response_Evaluation/PeerReview_Average_Ensemble_Response_Evaluate.sh
   ```
+
+**Note**: The provided GaC, SAFE, and CoRE evaluation scripts do not automatically evaluate AlpacaEval outputs, which require a fresh judge for newly generated text.
 
 
 ## 📚 Citation
@@ -269,3 +369,8 @@ Evaluate the quality of the generated responses and the performance of different
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2512.23213}, 
 }
+```
+
+## License
+
+Project-authored code is released under the MIT License. Third-party components and notices are listed in `THIRD_PARTY_NOTICES.md` and `LICENSES/`.

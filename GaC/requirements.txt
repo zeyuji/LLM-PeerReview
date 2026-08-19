@@ -1,0 +1,14 @@
+accelerate==0.27.2
+fastapi==0.112.0
+natsort==8.4.0
+numpy==1.26.4
+pydantic==2.8.2
+PyYAML==6.0.1
+ray==2.9.3
+Requests==2.32.3
+safetensors==0.4.4
+torch==2.2.1
+tqdm==4.66.2
+transformers==4.44.0
+uvicorn==0.30.5
+bitsandbytes

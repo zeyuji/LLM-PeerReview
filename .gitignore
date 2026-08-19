@@ -1,0 +1,8 @@
+.venv/
+LLM_Models/
+Results/
+log/
+logs/
+__pycache__/
+*.py[cod]
+*.log

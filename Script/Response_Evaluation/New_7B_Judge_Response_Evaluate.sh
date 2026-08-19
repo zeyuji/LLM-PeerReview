@@ -20,10 +20,10 @@ JUDGE_MODES=(
 )
 
 MAX_SCORES=(
-    "3"
     "5"
-    "7"
-    "10"
+    # "3"
+    # "7"
+    # "10"
 )
 
 TASK_TYPES=(
@@ -50,8 +50,8 @@ for MODEL_NAME in "${MODELS[@]}"; do
                 for MAX_SCORE in "${MAX_SCORES[@]}"; do
                     echo "Running evaluation on dataset: ${DATASET} with judge mode: ${JUDGE_MODE}  max score: ${MAX_SCORE}"
 
-                    # python -m Src.evaluate.evaluate_judge \
-                    python -m Src.evaluate.evaluate_judge_alpaca \
+                    # Use Src.evaluate.evaluate_judge_alpaca for Alpaca.
+                    python -m Src.evaluate.evaluate_judge \
                         --dataset_config "${CONFIG_ROOT}/${DATASET}.yaml" \
                         --data_name "${DATASET}" \
                         --data_dir "${DATASET_ROOT}/${DATASET}/test.jsonl" \

@@ -5,6 +5,7 @@ import os
 
 from Utils.util import (
     load_data_config,
+    load_indices,
     load_response_by_path,
     load_reference,
     clean_generations,
@@ -45,6 +46,12 @@ parser.add_argument(
     type=str,
     help="Name of the judge model.",
 )
+parser.add_argument(
+    "--seed",
+    type=int,
+    default=1,
+    help="Judge result seed suffix to evaluate. Default is 1.",
+)
 
 def evaluate(
     data_config: Dict,
@@ -63,20 +70,34 @@ def evaluate(
     else:
         raise ValueError("Unknown metrics")
 
-    assert len(scores) == len(responses)
+    if len(scores) != len(responses):
+        raise ValueError(f"Metric returned {len(scores)} scores for {len(responses)} responses")
     return np.mean(scores)     
 
 def main(args):
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
     references = load_reference(args.data_dir)
+    sample_indices = load_indices(args.data_dir)
+    if len(references) != len(sample_indices):
+        raise ValueError("Dataset reference and idx counts do not match")
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     scores = []
 
+    response_path = args.response_dir + f"/judge_{args.judge_model_name}_seed_{args.seed}.jsonl"
     try:
-        responses = load_response_by_path(args.response_dir + f"/judge_{args.judge_model_name}_seed_1.jsonl")
-        scores.append(evaluate(data_config, responses, references, args))
-    except:
-        print("Error: no such file {}".format(args.response_dir + f"/judge_{args.judge_model_name}_seed_1.jsonl"))
+        responses = load_response_by_path(response_path, expected_indices=sample_indices)
+    except FileNotFoundError:
+        print("Error: no such file {}".format(response_path))
         return
+    scores.append(evaluate(data_config, responses, references))
 
     print("Scores: {}".format(scores))
     print("Mean score: {}".format(np.mean(scores)))

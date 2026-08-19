@@ -3,7 +3,7 @@
 # Start GaC server before running this script
 # conda activate gac_env
 # cd GaC
-# python gac_api_server.py --config-path example_configs/4_ensemble_every_step.yaml --host 0.0.0.0 --port 8000
+# python gac_api_server.py --config-path configs/new_7b_4_model.yaml --host 0.0.0.0 --port 8000
 
 # Define paths for models, responses, datasets, and configurations
 MODEL_TYPE="New_7B"
@@ -14,8 +14,8 @@ CONFIG_ROOT="./Dataset_Configs"
 
 DATASETS=(
     "alpaca3"
-    "trivia_qa" 
-    "gsm8k400" 
+    "trivia_qa"
+    "gsm8k400"
     "math400"
 )
 

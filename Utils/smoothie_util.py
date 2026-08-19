@@ -8,7 +8,7 @@ from pathlib import Path
 
 from Utils.embedder import Embedder
 from Utils.smoothie_model import Smoothie
-from Utils.util import load_model_group_response
+from Utils.util import load_indices, load_model_group_response
 
 
 def run_smoothie(
@@ -25,6 +25,12 @@ def run_smoothie(
     test_dataset = []
     with jsonlines.open(original_data_path) as file:
         test_dataset = list(file.iter())
+    sample_indices = load_indices(str(original_data_path))
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     test_input_embeddings = embedder.embed_dataset(test_dataset)
     # [n_samples, embedding_dim]
 
@@ -32,13 +38,15 @@ def run_smoothie(
         response_path="./LLM_Response/Test/"+model_group_scale,
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=sample_indices,
     )
     test_generations_for_selection = load_model_group_response(
         response_path="./LLM_Response/Test/"+model_group_scale,
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=sample_indices,
     )
     test_generations_for_selection = np.array(test_generations_for_selection)
     # [n_models, n_samples]
@@ -99,11 +107,11 @@ def run_smoothie(
         {
             "task_name": data_config["dataset"],
             "generation": text,
-            "idx": idx,
-            "selected_model": int(logs[idx]),
-            "smoothie_weights": smoothie_dataset_weights[idx].tolist(),
+            "idx": sample_idx,
+            "selected_model": int(logs[position]),
+            "smoothie_weights": smoothie_dataset_weights[position].tolist(),
         }
-        for idx, text in enumerate(dataset_texts)
+        for position, (sample_idx, text) in enumerate(zip(sample_indices, dataset_texts))
     ]
     print(f"Saving results to {output_fpath}")
     with open(output_fpath, 'w', encoding='utf-8') as f:

@@ -5,6 +5,7 @@ import os
 
 from Utils.util import (
     load_data_config,
+    load_indices,
     load_response,
     load_reference,
     clean_generations,
@@ -40,6 +41,12 @@ parser.add_argument(
     type=str,
     help="Directory to save results to.",
 )
+parser.add_argument(
+    "--seed",
+    type=int,
+    default=1,
+    help="Response seed to evaluate. Default is 1.",
+)
 
 def evaluate(
     data_config: Dict,
@@ -58,18 +65,28 @@ def evaluate(
     else:
         raise ValueError("Unknown metrics")
 
-    print("scores:", scores[71])
-
-    assert len(scores) == len(responses)
+    if len(scores) != len(responses):
+        raise ValueError(f"Metric returned {len(scores)} scores for {len(responses)} responses")
     return np.mean(scores)     
 
 def main(args):
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
     references = load_reference(args.data_dir)
+    sample_indices = load_indices(args.data_dir)
+    if len(references) != len(sample_indices):
+        raise ValueError("Dataset reference and idx counts do not match")
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     scores = []
 
-    seed_n = 1
-    responses = load_response(args.response_dir, seed_n)
+    responses = load_response(args.response_dir, args.seed, expected_indices=sample_indices)
     scores.append(evaluate(data_config, responses, references))
 
     print("Scores: {}".format(scores))

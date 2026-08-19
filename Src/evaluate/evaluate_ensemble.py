@@ -5,6 +5,7 @@ import os
 
 from Utils.util import (
     load_data_config,
+    load_indices,
     load_response_by_path,
     load_reference,
     clean_generations,
@@ -58,22 +59,33 @@ def evaluate(
     else:
         raise ValueError("Unknown metrics")
     
-    print("scores:", scores[71])
-
-    assert len(scores) == len(responses)
+    if len(scores) != len(responses):
+        raise ValueError(f"Metric returned {len(scores)} scores for {len(responses)} responses")
     return np.mean(scores)     
 
 def main(args):
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
     references = load_reference(args.data_dir)
+    sample_indices = load_indices(args.data_dir)
+    if len(references) != len(sample_indices):
+        raise ValueError("Dataset reference and idx counts do not match")
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     scores = []
 
     try:
-        responses = load_response_by_path(args.response_dir)
-        scores.append(evaluate(data_config, responses, references))
-    except:
+        responses = load_response_by_path(args.response_dir, expected_indices=sample_indices)
+    except FileNotFoundError:
         print("Error: no such file {}".format(args.response_dir))
         return
+    scores.append(evaluate(data_config, responses, references))
 
     print("Scores: {}".format(scores))
     print("Mean score: {}".format(np.mean(scores)))

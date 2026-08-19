@@ -11,9 +11,11 @@ import gc
 from Utils.peerreview_util import (
     extract_int_scores,
     get_LLM_response,
+    load_judge_score_matrix,
 )
 from Utils.util import (
     load_embedding_input,
+    load_indices,
     load_model_group_response, 
     load_multi_model_prompt,
 )
@@ -53,9 +55,9 @@ parser.add_argument(
 parser.add_argument(
     "--judge_mode",
     type=str,
-    choices=["single", "double", "triple", "multi", "double_bias", "triple_bias", "multi_bias"],
+    choices=["single", "double", "triple", "triple_stride", "multi", "double_bias", "triple_bias", "multi_bias"],
     default="single",
-    help="Judge mode for scoring. (single/double/triple/multi/double_bias/triple_bias/multi_bias)",
+    help="Judge mode for scoring. (single/double/triple/triple_stride/multi/double_bias/triple_bias/multi_bias)",
 )
 parser.add_argument(
     "--max_score",
@@ -71,6 +73,7 @@ def get_max_new_tokens(judge_mode: str) -> int:
         "double": 30,
         "double_bias": 30,
         "triple": 40,
+        "triple_stride": 40,
         "triple_bias": 40,
         "multi": 50,
         "multi_bias": 50
@@ -110,6 +113,7 @@ def get_prompt_template(task_type: str, judge_mode: str, max_score: int) -> str:
         "single": "SINGLE",
         "double": "DOUBLE",
         "triple": "TRIPLE",
+        "triple_stride": "TRIPLE",
         "multi": "MULTI",
         "double_bias": "DOUBLE",  # 'double_bias' maps to 'DOUBLE'
         "triple_bias": "TRIPLE",  # 'triple_bias' maps to 'TRIPLE'
@@ -153,6 +157,16 @@ def get_scores_from_llm(model, tokenizer, prompt, max_new_tokens, expected_n_sco
     return scores, response
 
 def score_texts(model, tokenizer, task_type, judge_mode, max_score, texts, questions, embeddings):
+    if not texts or not texts[0]:
+        raise ValueError("texts must contain at least one sample and one candidate")
+    if any(len(sample_texts) != len(texts[0]) for sample_texts in texts):
+        raise ValueError("All samples must contain the same number of candidate responses")
+    if len(questions) != len(texts) or len(embeddings) != len(texts):
+        raise ValueError(
+            f"Scoring input lengths do not match: texts={len(texts)}, "
+            f"questions={len(questions)}, embeddings={len(embeddings)}"
+        )
+
     prompt_template = get_prompt_template(task_type, judge_mode, max_score)
     max_new_tokens = get_max_new_tokens(judge_mode)
     # if any(substring in task_type.lower() for substring in ["alpaca", "math", "gsm8k", "trivia_qa"]):
@@ -164,6 +178,7 @@ def score_texts(model, tokenizer, task_type, judge_mode, max_score, texts, quest
         "double": score_double,
         "double_bias": score_double_bias,
         "triple": score_triple,
+        "triple_stride": score_triple_stride,
         "triple_bias": score_triple_bias,
         "multi": score_multi,
         "multi_bias": score_multi_bias,
@@ -407,6 +422,73 @@ def score_triple(model, tokenizer, prompt_template, max_new_tokens, max_score, t
 
     return result_scores
 
+def score_triple_stride(model, tokenizer, prompt_template, max_new_tokens, max_score, texts, questions):
+    n_samples = len(texts)
+    n_models = len(texts[0])
+
+    prompts, indices = [], []
+
+    for i in range(n_samples):
+        model_responses = [texts[i][j] for j in range(n_models)]
+
+        model_indices = list(range(n_models))
+        random.shuffle(model_indices)
+
+        model_triplets = [
+            (model_indices[0], model_indices[1], model_indices[2]),
+            (model_indices[2], model_indices[3], model_indices[0]),
+            (model_indices[2], model_indices[1], model_indices[0]),
+            (model_indices[0], model_indices[3], model_indices[2]),
+        ]
+
+        for j, k, l in model_triplets:
+            prompt = build_prompt(
+                prompt_template,
+                question=questions[i],
+                response1=model_responses[j],
+                response2=model_responses[k],
+                response3=model_responses[l],
+            )
+            prompts.append(prompt)
+            indices.append((i, j, k, l))
+
+    score_buckets = [[] for _ in range(n_samples)]
+
+    for idx in tqdm(range(len(prompts)), desc="Scoring triple stride"):
+        i, j, k, l = indices[idx]
+        scores, response = get_scores_from_llm(
+            model,
+            tokenizer,
+            prompts[idx],
+            max_new_tokens,
+            3,
+            max_score,
+        )
+        print(f"Sample {i} pair ({j}, {k}, {l}) response:\n{response.split('---')[0].strip()}")
+        print(f"Sample {i} pair ({j}, {k}, {l}) scores: {scores}")
+
+        score_buckets[i].append((j, scores[0]))
+        score_buckets[i].append((k, scores[1]))
+        score_buckets[i].append((l, scores[2]))
+
+    result_scores = []
+
+    for i in range(n_samples):
+        model_score_map = {}
+        for model_idx, score in score_buckets[i]:
+            model_score_map.setdefault(model_idx, []).append(score)
+
+        print(f"Sample {i} scores:")
+        for j in range(n_models):
+            print(f"model {j}: {model_score_map[j]}")
+            if j in model_score_map:
+                avg_score = sum(model_score_map[j]) / len(model_score_map[j])
+            else:
+                avg_score = (1 + int(max_score)) / 2
+            result_scores.append(avg_score)
+
+    return result_scores
+
 def score_triple_bias(model, tokenizer, prompt_template, max_new_tokens, max_score, texts, questions):
     n_samples = len(texts)
     n_models = len(texts[0])
@@ -639,16 +721,36 @@ def judge_model(
     scores_dir = output_fpath.parent / "scores_matrices"
     scores_dir.mkdir(parents=True, exist_ok=True)
 
+    dataset_path = f"./Datasets/{data_config['dataset']}/test.jsonl"
+    test_indices = load_indices(dataset_path)
+
     # Load the model generation results for the test set
     test_generations = load_model_group_response(
         response_path=f"./LLM_Response/Test/{model_group_scale}",
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=test_indices,
     )
-    test_prompts = load_multi_model_prompt(f"./Datasets/{data_config['dataset']}/test.jsonl")
-    test_embeddings = load_embedding_input(f"./Datasets/{data_config['dataset']}/test.jsonl")
-    
+    test_prompts = load_multi_model_prompt(dataset_path)
+    test_embeddings = load_embedding_input(dataset_path)
+
+    full_sample_count = len(test_prompts)
+    if len(test_embeddings) != full_sample_count or len(test_indices) != full_sample_count:
+        raise ValueError(
+            f"Dataset fields have inconsistent lengths for {data_config['dataset']}: "
+            f"prompts={full_sample_count}, embeddings={len(test_embeddings)}, idx={len(test_indices)}"
+        )
+    if data_config.get("test_size") != full_sample_count:
+        raise ValueError(
+            f"Dataset config test_size={data_config.get('test_size')} does not match "
+            f"{full_sample_count} records for {data_config['dataset']}"
+        )
+    if any(len(responses) != full_sample_count for responses in test_generations):
+        raise ValueError(
+            f"Generation count does not match dataset size {full_sample_count} for {data_config['dataset']}"
+        )
+
     # Get the number of models and samples
     n_models = len(test_generations)
     n_samples = len(test_generations[0])
@@ -661,9 +763,20 @@ def judge_model(
     # If the score file already exists, skip the processing and load the existing scores
     if json_filename.exists():
         print(f"File {json_filename} already exists. Skipping...")
-        with open(json_filename, 'r') as f:
-            data = json.load(f)
-        current_judge_scores = np.array(data["scores"])
+        current_judge_scores = load_judge_score_matrix(
+            json_filename,
+            expected_shape=(n_samples, n_models),
+            expected_fields={
+                "judge_model": judge_model_name,
+                "samples": n_samples,
+                "generators": model_group,
+                "dataset": data_config["dataset"],
+                "seed": seed,
+                "judge_mode": judge_mode,
+                "max_score": int(max_score),
+                "sample_indices": test_indices,
+            },
+        )
     else:
         # Load the judge model if the scores file does not exist
         judge_model_path = MODEL_NAME_MAPS[judge_model_name]
@@ -708,6 +821,11 @@ def judge_model(
             "judge_model": judge_model_name,
             "samples": n_samples,
             "generators": model_group,
+            "dataset": data_config["dataset"],
+            "seed": seed,
+            "judge_mode": judge_mode,
+            "max_score": int(max_score),
+            "sample_indices": test_indices,
             "scores": current_judge_scores.tolist()
         }
 
@@ -745,10 +863,10 @@ def judge_model(
         {
             "task_name": data_config["dataset"],
             "generation": text,
-            "idx": idx,
+            "idx": sample_idx,
             "selected_model": int(best_model_idx)  # Convert model index to integer
         }
-        for idx, (text, best_model_idx) in enumerate(zip(final_generations, best_model_indices))
+        for sample_idx, text, best_model_idx in zip(test_indices, final_generations, best_model_indices)
     ]
     
     # Save the results

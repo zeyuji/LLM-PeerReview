@@ -45,6 +45,10 @@ parser.add_argument(
 
 def main(args: argparse.Namespace):
     data_config = load_data_config(args.dataset_config)
+    if args.type == "sample_dependent" and args.k is None:
+        raise ValueError("--k is required when --type=sample_dependent")
+    if args.k is not None and args.k <= 0:
+        raise ValueError(f"--k must be positive when provided, got {args.k}")
     embedder = Embedder(model_name=args.embedding_model)
     model_groups = MODEL_GROUPS
 

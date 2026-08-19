@@ -1,5 +1,6 @@
 import argparse
 import random
+from pathlib import Path
 from typing import Dict, List, Union
 import numpy as np
 import os
@@ -10,7 +11,9 @@ from openai import OpenAI
 from Utils.util import (
     load_data_config,
     load_embedding_input,
+    load_indices,
     load_response,
+    load_response_by_path,
     load_reference,
     clean_generations,
 )
@@ -115,12 +118,17 @@ def extract_model_identifier(output, switch):
         return False, None
 
 
-api_key='xxx'
-client = OpenAI(api_key=api_key)
+client = None
 
 def ask_gpt(
     messages: List[Dict[str, str]],
 ) -> str:
+    global client
+    if client is None:
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY is required for GPT evaluation")
+        client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages
@@ -193,17 +201,34 @@ def evaluate(
     else:
         raise ValueError("Unknown metrics")
 
-    assert len(scores) == len(responses)
+    if len(scores) != len(responses):
+        raise ValueError(f"Metric returned {len(scores)} scores for {len(responses)} responses")
     return np.mean(scores)
 
 def main(args):
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
     instructions = load_embedding_input(args.data_dir)
     references = load_reference(args.data_dir)
+    sample_indices = load_indices(args.data_dir)
+    if len(instructions) != len(sample_indices) or len(references) != len(sample_indices):
+        raise ValueError("Dataset instruction, reference, and idx counts do not match")
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     scores = []
 
     seed_n = 1
-    responses = load_response(args.response_dir, seed_n)
+    response_path = Path(args.response_dir)
+    if response_path.is_file():
+        responses = load_response_by_path(str(response_path), expected_indices=sample_indices)
+    else:
+        responses = load_response(str(response_path), seed_n, expected_indices=sample_indices)
     scores.append(evaluate(
         data_config, responses, references, instructions))
 

@@ -1,13 +1,10 @@
 import argparse
 from pathlib import Path
-from transformers import set_seed
 import jsonlines
-import torch
-import gc
-from typing import Dict, List, Tuple
 from tqdm.auto import tqdm
 import requests
 
+from Utils.model_generate_util import get_generation_resume_position, validate_generation_dataset_size
 from Utils.util import load_data_config, construct_dataset_path
 
 parser = argparse.ArgumentParser()
@@ -49,25 +46,44 @@ parser.add_argument(
     type=int,
     help="Seed for random number generator.",
 )
+parser.add_argument(
+    "--server_url",
+    type=str,
+    default="http://127.0.0.1:8000/api/generate/",
+    help="GaC generation API endpoint.",
+)
+parser.add_argument(
+    "--request_timeout",
+    type=float,
+    default=1800.0,
+    help="Timeout in seconds for each GaC generation request.",
+)
 
 def main(args: argparse.Namespace):
     """
     Main Function
     """
     data_config = load_data_config(args.dataset_config)
+    if data_config.get("dataset") != args.data_name:
+        raise ValueError(
+            f"Dataset config names {data_config.get('dataset')!r}, but --data_name is {args.data_name!r}"
+        )
+    if args.n_generations <= 0:
+        raise ValueError(f"n_generations must be positive, got {args.n_generations}")
+    if args.request_timeout <= 0:
+        raise ValueError(f"request_timeout must be positive, got {args.request_timeout}")
     data_path = construct_dataset_path(data_dir=args.data_dir, test_or_train=args.test_or_train)
     output_path = Path(args.results_dir + "/" + args.data_name)
-    # max_length = HF_MODEL_MAX_LENGTHS[args.model]
-
-    if args.n_generations > 1:
-        set_seed(args.seed)
-        assert args.temperature != 0
 
     gac_generate_predictions(
         max_new_tokens=data_config["max_new_tokens"],
         n_generations=args.n_generations,
         data_path=data_path,
         output_fpath=output_path,
+        server_url=args.server_url,
+        request_timeout=args.request_timeout,
+        expected_n_samples=data_config.get(f"{args.test_or_train}_size"),
+        split_name=args.test_or_train,
     )
 
 def gac_generate_predictions(
@@ -75,6 +91,10 @@ def gac_generate_predictions(
     max_new_tokens: int,
     data_path: str,
     output_fpath: Path,
+    server_url: str,
+    request_timeout: float,
+    expected_n_samples: int,
+    split_name: str,
 ):
     """
     Generates predictions for a dataset using a pretrained model and saves them to separate directories for each seed.
@@ -86,14 +106,6 @@ def gac_generate_predictions(
         output_fpath (Path): Directory to save the generated outputs.
     """
 
-    # Check if the results file already exists and determine how many lines have been generated
-    existing_lines = 0
-    if output_fpath.exists():
-        existing_lines = len((output_fpath / "Seed-1" / "seed_1.jsonl").read_text().splitlines())
-        print(f"Results file {output_fpath} exists. Existing lines: {existing_lines}")
-    else:
-        print(f"Will save results to: {output_fpath}")
-
     # Create subdirectories for each seed/generation
     output_fpath.mkdir(parents=True, exist_ok=True)
     seed_dirs = [output_fpath / f"Seed-{i}" for i in range(1, n_generations + 1)]
@@ -103,6 +115,14 @@ def gac_generate_predictions(
     # Load the dataset
     with jsonlines.open(data_path) as file:
         dataset = list(file.iter())
+    validate_generation_dataset_size(dataset, expected_n_samples, split_name, data_path)
+
+    seed_files = [seed_dir / f"seed_{i}.jsonl" for i, seed_dir in enumerate(seed_dirs, start=1)]
+    existing_lines = get_generation_resume_position(seed_files, dataset, str(output_fpath))
+    if existing_lines > 0:
+        print(f"Resuming GaC generation from line {existing_lines} for {output_fpath}")
+    else:
+        print(f"Will save results to: {output_fpath}")
 
     # Skip if all data has been processed
     if existing_lines == len(dataset):
@@ -122,6 +142,8 @@ def gac_generate_predictions(
             max_new_tokens=max_new_tokens,
             n_generations=n_generations,
             prompt=prompt,
+            server_url=server_url,
+            request_timeout=request_timeout,
         )
         
         # Save the generated outputs for each seed
@@ -137,6 +159,8 @@ def gac_generate_per_sample(
     max_new_tokens: int,
     n_generations: int,
     prompt: str,
+    server_url: str,
+    request_timeout: float,
 ):
     """
     Generate multiple texts for a single prompt using a pretrained model.
@@ -146,8 +170,6 @@ def gac_generate_per_sample(
         n_generations (int): Number of generations to produce.
         prompt (str): The input prompt for generation.
     """
-
-    url = "http://0.0.0.0:8000/api/generate/"
 
     data = {
         "messages_list": [
@@ -165,9 +187,21 @@ def gac_generate_per_sample(
 
     results = []
     for _ in range(n_generations):
-        response = requests.post(url, json=data)
-        print(response.json()["response"][0])
-        results.append(response.json()["response"][0])
+        try:
+            response = requests.post(server_url, json=data, timeout=request_timeout)
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            raise RuntimeError(f"GaC request failed for {server_url}: {exc}") from exc
+
+        try:
+            payload = response.json()
+        except ValueError as exc:
+            raise RuntimeError(f"GaC server returned invalid JSON: {response.text[:200]}") from exc
+        generated = payload.get("response")
+        if not isinstance(generated, list) or len(generated) != 1 or not isinstance(generated[0], str):
+            raise RuntimeError(f"GaC server returned an invalid response payload: {payload}")
+        print(generated[0])
+        results.append(generated[0])
 
     return results
     

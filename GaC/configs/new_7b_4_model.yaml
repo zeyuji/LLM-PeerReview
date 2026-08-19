@@ -1,0 +1,39 @@
+# All models are supportive, so GaC ensembles them at every decoding step.
+NORM_TYPE_API_SERVER: 'average'
+THRESHOLD_API_SERVER: 1.0
+CONFIG_API_SERVER:
+  - weight: '../LLM_Models/New_7B/Meta-Llama-3.1-8B-Instruct'
+    max_memory:
+      0: '32GiB'
+    num_gpus: 1
+    name: 'Meta-Llama-3.1-8B-Instruct'
+    score: 100
+    priority: 'supportive'
+    quantization: 'none'
+
+  - weight: '../LLM_Models/New_7B/Mistral-7B-Instruct-v0.3'
+    max_memory:
+      0: '32GiB'
+    num_gpus: 1
+    name: 'Mistral-7B-Instruct-v0.3'
+    score: 100
+    priority: 'supportive'
+    quantization: 'none'
+
+  - weight: '../LLM_Models/New_7B/Qwen2-7B-Instruct'
+    max_memory:
+      0: '32GiB'
+    num_gpus: 1
+    name: 'Qwen2-7B-Instruct'
+    score: 100
+    priority: 'supportive'
+    quantization: 'none'
+
+  - weight: '../LLM_Models/New_7B/Qwen2.5-7B-Instruct'
+    max_memory:
+      0: '32GiB'
+    num_gpus: 1
+    name: 'Qwen2.5-7B-Instruct'
+    score: 100
+    priority: 'supportive'
+    quantization: 'none'

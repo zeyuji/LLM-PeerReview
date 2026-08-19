@@ -1,0 +1,32 @@
+{
+  "dataset": "trivia_qa",
+  "split": "test",
+  "seed": 1,
+  "data_path": "./Datasets/trivia_qa/test.jsonl",
+  "output_path": "LLM_Response/New_7B_Ensemble/CORE/gac/consist-rbf/main_Qwen2.5-7B-Instruct/models_Qwen2.5-7B-Instruct__Meta-Llama-3.1-8B-Instruct__Mistral-7B-Instruct-v0.3__Qwen2-7B-Instruct/trivia_qa/seed_1.jsonl",
+  "main_model": "Qwen2.5-7B-Instruct",
+  "assist_models": [
+    "Meta-Llama-3.1-8B-Instruct",
+    "Mistral-7B-Instruct-v0.3",
+    "Qwen2-7B-Instruct"
+  ],
+  "model_list": [
+    "Qwen2.5-7B-Instruct",
+    "Meta-Llama-3.1-8B-Instruct",
+    "Mistral-7B-Instruct-v0.3",
+    "Qwen2-7B-Instruct"
+  ],
+  "devices": [
+    "cuda:0",
+    "cuda:1",
+    "cuda:2",
+    "cuda:3"
+  ],
+  "align_method": "gac",
+  "variant": "consist-rbf",
+  "top_k": 10,
+  "max_new_tokens": 40,
+  "max_samples": null,
+  "debug": false,
+  "token_map_cache_root": "CoRE_Cache/token_maps"
+}

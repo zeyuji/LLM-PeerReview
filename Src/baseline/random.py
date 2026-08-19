@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 import numpy as np
 import json
-from Utils.util import load_model_group_response
+from Utils.util import load_indices, load_model_group_response
 
 from Utils.util import load_data_config
 from Utils.constants import (
@@ -34,11 +34,18 @@ def run_random(
     model_group_scale: str,
     model_group: list,
 ):
+    sample_indices = load_indices(f"./Datasets/{data_config['dataset']}/test.jsonl")
+    if int(data_config["test_size"]) != len(sample_indices):
+        raise ValueError(
+            f"Dataset config test_size={data_config['test_size']} does not match "
+            f"{len(sample_indices)} records"
+        )
     test_generations_for_random = load_model_group_response(
         response_path="./LLM_Response/Test/"+model_group_scale,
         model_group=model_group,
         data_name=data_config["dataset"],
-        seed=seed
+        seed=seed,
+        expected_indices=sample_indices,
     )
     test_generations_for_random = np.array(test_generations_for_random)
     # [n_models, n_samples]
@@ -57,10 +64,10 @@ def run_random(
         {
             "task_name": data_config["dataset"],
             "generation": text,
-            "idx": idx,
-            "selected_model": random_logs[idx],
+            "idx": sample_idx,
+            "selected_model": random_logs[position],
         }
-        for idx, text in enumerate(dataset_texts)
+        for position, (sample_idx, text) in enumerate(zip(sample_indices, dataset_texts))
     ]
     print(f"Saving results to {output_fpath}")
     with open(output_fpath, 'w', encoding='utf-8') as f:
