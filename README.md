@@ -1,8 +1,10 @@
 <h1 align="center">LLM-PeerReview</h1>
 
 <p align="center">
-  <a href='https://arxiv.org/abs/2512.23213'>
-    <img src='https://img.shields.io/badge/Arxiv-2512.23213-b31b1b.svg?logo=arXiv'></a>
+  <a href="https://arxiv.org/abs/2512.23213">
+    <img src="https://img.shields.io/badge/arXiv-2512.23213-B31B1B.svg?logo=arXiv" alt="arXiv paper"></a>
+  <a href="https://huggingface.co/papers/2512.23213">
+    <img src="https://img.shields.io/badge/Hugging%20Face-Paper-FFD21E.svg?logo=huggingface" alt="Hugging Face Paper"></a>
   <a href="https://zeyuji.github.io/LLM-PeerReview/">
     <img src="https://img.shields.io/badge/🌐%20Website-Visit%20Now-purple" alt="Website"></a>
   <a href="https://mp.weixin.qq.com/s/qqR5BW-TkHBaqPA5O-tWXw">
