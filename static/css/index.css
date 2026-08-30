@@ -51,18 +51,22 @@ body {
 
 .publication-title-content {
   display: inline-block;
-  position: relative;
   text-align: center;
 }
 
-.publication-title-logo {
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  width: 1.8em;
+.publication-logo-showcase {
+  margin-top: 1.75rem;
+  line-height: 0;
+  text-align: center;
+}
+
+.publication-hero-logo {
+  display: block;
+  width: clamp(260px, 35vw, 400px);
+  max-width: 100%;
   height: auto;
   object-fit: contain;
-  transform: translate(-0.25em, -50%);
+  margin: 0 auto;
 }
 
 @media screen and (max-width: 768px) {
@@ -71,18 +75,12 @@ body {
     line-height: 1.18;
   }
 
-  .publication-title-content {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3em;
-    text-align: center;
+  .publication-logo-showcase {
+    margin-top: 1.25rem;
   }
 
-  .publication-title-logo {
-    position: static;
-    width: 3.2em;
-    transform: none;
+  .publication-hero-logo {
+    width: clamp(240px, 72vw, 320px);
   }
 
 }

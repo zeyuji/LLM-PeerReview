@@ -136,7 +136,6 @@
           <div class="column has-text-centered">
             <h1 class="title is-1 publication-title">
               <span class="publication-title-content">
-                <img class="publication-title-logo" src="static/images/logo2new.png" alt="">
                 <span>Scoring, Reasoning, and Selecting the Best!<br>
                   Ensembling Large Language Models via a Peer-Review Process</span>
               </span>
@@ -257,6 +256,9 @@
                     <span>Blog</span>
                   </a>
                 </span>
+              </div>
+              <div class="publication-logo-showcase">
+                <img class="publication-hero-logo" src="static/images/logo2new.png" alt="LLM-PeerReview logo">
               </div>
             </div>
           </div>
@@ -500,14 +502,16 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                Both LLM-PeerReview and LLM-PeerReview-W consistently outperform any single LLM and all LLM Ensemble
-                baselines across all datasets. Regarding average performance, our two variants (with results of 67.4%
-                and 67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform
-                the advanced ensemble method Smoothie-Global by 6.9% and 7.3%. These
-                results directly demonstrate the effectiveness of our method, as it achieves superior performance by
-                integrating the collective knowledge of multiple models across factual-recall QA tasks, math
-                reasoning tasks, and instruction-following tasks. Additionally, the ensemble task across these four
-                datasets is challenging, as the performance of the four LLMs varies significantly for each dataset.
+                The main results are shown in the table. First, by examining the results in the “Single LLM” and “LLM
+                Ensemble” sections of the table, one key finding is that both LLM-PeerReview and LLM-PeerReview-W
+                consistently outperform any single LLM and all LLM Ensemble baselines across all datasets. In the last
+                column, which presents the average performance, our two variant methods (with results of 67.4% and
+                67.8%) surpass the strongest single model, Qwen2.5, by 4.7% and 5.1%, respectively, and outperform the
+                advanced ensemble method, Smoothie-Global, by 6.9% and 7.3%. These results directly demonstrate the
+                effectiveness of our method, as it achieves superior performance by integrating the collective
+                knowledge of multiple models across factual-recall QA tasks, math reasoning tasks, and
+                instruction-following tasks. Also, the ensemble task across these four datasets is challenging, as the
+                performance of the four LLMs varies significantly for each dataset.
               </div>
             </div>
           </div>
@@ -519,10 +523,12 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                Individual-LLM performance and win-tie-loss comparisons on the challenging AlpacaEval dataset highlight
-                that models with the best overall performance may underperform on specific tasks compared to those with
-                weaker overall results. A strong LLM does not excel across all datasets. Each model has its
-                strengths and weaknesses, highlighting the substantial practical significance of LLM Ensemble.
+                In the figure, the upper subplot presents a radar chart of individual LLM performance, while the lower
+                subplot displays the win-tie-loss chart for models on the challenging instruction-following dataset,
+                AlpacaEval. This figure highlights that models with the best overall performance may underperform on
+                specific tasks compared to those with weaker overall results. In summary, the results in the table and
+                figure demonstrate that a strong LLM does not excel across all datasets. Each model has its strengths
+                and weaknesses, highlighting the substantial practical significance of LLM Ensemble.
               </div>
             </div>
           </div>
@@ -534,9 +540,12 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                Using a single LLM as a judge to select the optimal response already performs quite well, surpassing the
-                overall best model, Qwen2.5, in three of four cases. However, comparison with LLM-PeerReview shows that
-                aggregating and averaging scores from multiple judges is beneficial.
+                In the “Our variants” of the table, we present the performance of using a single LLM as a judge to
+                select the optimal response. From the average performances in the last column of the table, we observe
+                that these variants perform quite well (surpassing the overall best model, Qwen2.5, in 3/4 cases). On
+                the other hand, when comparing the performance of these variants with that of our prototype
+                LLM-PeerReview, it becomes clear that aggregating and averaging the scores from multiple judges is
+                beneficial.
               </div>
             </div>
           </div>
@@ -548,9 +557,11 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                LLM-PeerReview-W leads to further performance gains compared to LLM-PeerReview. Subtle variations in
-                the transition matrices learned for each model, together with positive correlation coefficients,
-                demonstrate that our method can effectively identify stronger and weaker judges.
+                By observing the average results in the table, we find that LLM-PeerReview-W leads to further
+                performance gains compared to LLM-PeerReview. In the left subplot of the figure, we observe subtle
+                variations in the transition matrices learned for each model. On the other hand, the right subplot in
+                the figure, displaying positive correlation coefficients, demonstrates that our method can effectively
+                identify stronger and weaker judges.
               </div>
             </div>
           </div>
@@ -563,12 +574,20 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                The performance of the four scoring variants follows the order <i>quadruple-half</i> &gt;
-                <i>flipped-triple</i> &gt; <i>double</i> &gt; <i>single</i>. Double, flipped-triple, and quadruple-half all
-                offer noticeable de-biasing advantages over single scoring. Their theoretical complexities are
-                O(J<sup>2</sup>), O(J), and O(J!), respectively, making flipped-triple the lowest-complexity de-biased
-                strategy and more time-efficient than double and quadruple-half. The performance gain from 59.7 with
-                single scoring to 66.8 with flipped-triple scoring further validates its de-biasing impact.
+                (1) It is intuitive that, in addition to our recommended <i>flipped-triple scoring</i> method, several
+                variant scoring methods could be employed. (Their definitions are provided in the caption of the
+                table.) Overall, the performance of these four variants follows the order:
+                <i>quadruple-half</i> &gt; <i>flipped-triple</i> &gt; <i>double</i> &gt; <i>single</i>. Variants
+                quadruple-half, flipped-triple, and double all offer noticeable <i>de-biasing</i> performance advantages
+                over the single-scoring strategy. On the other hand, in terms of theoretical computational complexity,
+                the complexities of single/double/flipped-triple/quadruple-half are
+                O(J)/O(J<sup>2</sup>)/O(J)/O(J!), respectively, with flipped-triple having the lowest computational
+                complexity among the de-biased strategies.
+                Further, in the table, we present the scoring efficiency of these four strategies. Compared to
+                strategies double and quadruple-half, strategy flipped-triple is the most time-efficient. (2)
+                <i>Furthermore, the remarkable performance gain—from 59.7 with the original single to 66.8 with the
+                  proposed flipped triple—validates the profound debiasing impact of our scoring technique. This
+                  technique serves as a crucial cornerstone of LLM-PeerReview.</i>
               </div>
             </div>
           </div>
@@ -580,10 +599,12 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                Excluding the response-generation stage shared by both methods, LLM-PeerReview requires substantially
-                less GPU time than MAD on GSM8K and MATH. LLM-PeerReview uses one scoring round in which each judge
-                outputs only a few scalar scores, whereas MAD uses two debate rounds in which every model generates much
-                longer revised responses. The final selecting step incurs virtually no additional computational cost.
+                The table compares their post-generation inference costs, excluding the shared response-generation
+                stage. On GSM8K and MATH, LLM-PeerReview requires substantially less GPU time. <i>This advantage mainly
+                  comes from its simpler interaction pattern: our scoring stage requires only one round, in which each
+                  judge outputs a few scalar scores, whereas MAD performs two debate rounds and requires every model to
+                  generate much longer revised full responses in each round.</i> Also, as shown in the table, our final
+                selecting step incurs virtually no additional computational cost.
               </div>
             </div>
           </div>
@@ -595,9 +616,10 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                The framework can reduce the judge count during deployment to improve efficiency while retaining the
-                efficient flipped-triple scoring strategy. LLM-PeerReview remains effective in this lightweight setting:
-                using fewer judges during scoring still outperforms the LLM Ensemble baselines.
+                As discussed in Section 2.4, our framework allows for flexibility in reducing the judge count during
+                deployment to further enhance efficiency, building upon the efficient flipped-triple scoring strategy.
+                The Appendix also shows that LLM-PeerReview remains effective in a lightweight setting: using fewer
+                judges during scoring still outperforms the baselines.
               </div>
             </div>
           </div>
@@ -609,10 +631,28 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-body">
-                Across score levels 3, 5, 7, and 10, flipped-triple judges exhibit varying performance without a
-                consistent trend. Each level uses carefully designed descriptions and corresponding prompts. In the main
-                experiments, the scoring levels for TriviaQA, GSM8K, MATH, and AlpacaEval are 5, 3, 3, and 10,
-                respectively.
+                In the figure, we conduct a further analysis of how different scoring levels influence the performance
+                of flipped-triple judges. For each scoring level, we have carefully crafted meaningful descriptions and
+                corresponding prompts. Under these conditions, these judges exhibit varying performance, showing no
+                consistent tendencies across the levels of 3, 5, 7, and 10. In addition, as indicated by the prompts in
+                the Appendix, for the main experiment in the table, the scoring levels for the four datasets were 5, 3,
+                3, and 10, respectively.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header">
+              <span class="icon"><i class="fas fa-plus"></i></span>
+              <strong>9. Further Analysis in the Appendix.</strong>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-body">
+                We provide more comprehensive experimental analyses in the Appendix, including performance results of
+                LLM-PeerReview variants using the “Single” scoring strategy, win-tie-loss charts across all models on
+                four datasets, full analysis for the transition matrix, additional results using varying numbers of
+                judges, the performance of LLM-PeerReview with 13B-scale LLMs, more efficiency/cost analysis for
+                LLM-PeerReview and four case studies across the four datasets respectively.
               </div>
             </div>
           </div>
