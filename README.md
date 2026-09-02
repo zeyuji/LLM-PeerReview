@@ -363,13 +363,13 @@ Evaluate the quality of the generated responses and the performance of different
 ## 📚 Citation
 ```bibtex
 @misc{chen2026scoringreasoningselectingbest,
-      title={Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process}, 
-      author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Jinhuan Song and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun},
+      title={Scoring, Reasoning, and Selecting the Best! Ensembling Large Language Models via a Peer-Review Process},
+      author={Zhijun Chen and Zeyu Ji and Qianren Mao and Hao Wu and Jinhuan Song and Junhang Cheng and Bangjie Qin and Zhuoran Li and Jingzheng Li and Kai Sun and Zizhe Wang and Yikun Ban and Zhu Sun and Xiangyang Ji and Hailong Sun and Xiao Huang},
       year={2026},
       eprint={2512.23213},
       archivePrefix={arXiv},
       primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2512.23213}, 
+      url={https://arxiv.org/abs/2512.23213},
 }
 ```
 
