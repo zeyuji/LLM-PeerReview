@@ -1,4 +1,10 @@
+<p align="center">
+  <img src="Images/logo.png" width="180" alt="LLM-PeerReview logo">
+</p>
+
 <h1 align="center">LLM-PeerReview</h1>
+
+<p align="center">LLM Ensembling &amp; Benchmark Suite</p>
 
 <p align="center">
   <a href="https://arxiv.org/abs/2512.23213">
@@ -19,20 +25,25 @@
 > 📌 **This repository provides:**
 > - 🌀 **Two variants of LLM-PeerReview:** LLM-PeerReview-Average & LLM-PeerReview-Weighted
 > - 📖 **Reproductions of recent LLM Ensemble baselines:** Random, GaC, Agent-Forest, Smoothie-Global, Smoothie-Local, Multi-Agent Debate (MAD), SAFE, and CoRE
->   <details>
->   <summary><small>Click to see references</small></summary>
->   
->   - **Random:** [Lu et al., 2024](https://arxiv.org/abs/2401.02994) and [Guha et al., 2024](https://arxiv.org/abs/2412.04692)  
->   - **GaC:** [Yu et al., 2024](https://arxiv.org/abs/2406.12585)  
->   - **Agent-Forest:** [Li et al., 2024](https://arxiv.org/abs/2402.05120)  
->   - **Smoothie:** [Guha et al., 2024](https://arxiv.org/abs/2412.04692)
->   - **MAD:** [Du et al., 2023](https://arxiv.org/abs/2305.14325)
->   - **SAFE:** [Yun et al., 2026](https://arxiv.org/abs/2510.15346)
->   - **CoRE:** [Zeng et al., 2025](https://arxiv.org/abs/2510.13855)
->   </details>
-> - 📊 **Evaluation on multiple benchmarks:** GSM8K, MATH, TriviaQA, and AlpacaEval
+> - 📊 **LLM Ensemble Benchmark:** Baseline implementations, pre-generated model responses, and evaluation scripts for GSM8K, MATH, TriviaQA, and AlpacaEval, covering mathematical reasoning, factual question answering, and instruction following.
 
 > 📢 **Welcome to use! If you find this project helpful, please consider giving it a ⭐ star!**
+
+## 📖 Baseline Implementations and Papers
+
+**Random:** [Blending Is All You Need: Cheaper, Better Alternative to Trillion-Parameters LLM](https://arxiv.org/abs/2401.02994); [Smoothie: Label Free Language Model Routing](https://arxiv.org/abs/2412.04692)
+
+**GaC:** [Breaking the Ceiling of the LLM Community by Treating Token Generation as a Classification for Ensembling](https://arxiv.org/abs/2406.12585)
+
+**Agent-Forest:** [More Agents Is All You Need](https://arxiv.org/abs/2402.05120)
+
+**Smoothie-Global & Smoothie-Local:** [Smoothie: Label Free Language Model Routing](https://arxiv.org/abs/2412.04692)
+
+**Multi-Agent Debate (MAD):** [Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate](https://aclanthology.org/2024.emnlp-main.992/)
+
+**SAFE:** [When to Ensemble: Identifying Token-Level Points for Stable and Fast LLM Ensembling](https://arxiv.org/abs/2510.15346)
+
+**CoRE:** [Harnessing Consistency for Robust Test-Time LLM Ensemble](https://arxiv.org/abs/2510.13855)
 
 ## 💡 Overview
 
