@@ -31,19 +31,13 @@
 
 ## 📖 Baseline Implementations and Papers
 
-**Random:** [Blending Is All You Need: Cheaper, Better Alternative to Trillion-Parameters LLM](https://arxiv.org/abs/2401.02994); [Smoothie: Label Free Language Model Routing](https://arxiv.org/abs/2412.04692)
-
-**GaC:** [Breaking the Ceiling of the LLM Community by Treating Token Generation as a Classification for Ensembling](https://arxiv.org/abs/2406.12585)
-
-**Agent-Forest:** [More Agents Is All You Need](https://arxiv.org/abs/2402.05120)
-
-**Smoothie-Global & Smoothie-Local:** [Smoothie: Label Free Language Model Routing](https://arxiv.org/abs/2412.04692)
-
-**Multi-Agent Debate (MAD):** [Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate](https://aclanthology.org/2024.emnlp-main.992/)
-
-**SAFE:** [When to Ensemble: Identifying Token-Level Points for Stable and Fast LLM Ensembling](https://arxiv.org/abs/2510.15346)
-
-**CoRE:** [Harnessing Consistency for Robust Test-Time LLM Ensemble](https://arxiv.org/abs/2510.13855)
+- (arXiv'24) **Blending Is All You Need: Cheaper, Better Alternative to Trillion-Parameters LLM** (Random) [[Paper]](https://arxiv.org/abs/2401.02994)
+- (EMNLP Findings'24) **Breaking the Ceiling of the LLM Community by Treating Token Generation as a Classification for Ensembling** (GaC) [[Paper]](https://aclanthology.org/2024.findings-emnlp.99/)
+- (TMLR'24) **More Agents Is All You Need** (Agent-Forest) [[Paper]](https://openreview.net/forum?id=bgzUSZ8aeg)
+- (NeurIPS'24) **Smoothie: Label Free Language Model Routing** (Smoothie-Global & Smoothie-Local; also a reference for Random) [[Paper]](https://proceedings.neurips.cc/paper_files/paper/2024/hash/e6b57a990462df5afa58d64ce2709db9-Abstract-Conference.html)
+- (EMNLP'24) **Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate** (MAD) [[Paper]](https://aclanthology.org/2024.emnlp-main.992/)
+- (ICLR'26) **When to Ensemble: Identifying Token-Level Points for Stable and Fast LLM Ensembling** (SAFE) [[Paper]](https://proceedings.iclr.cc/paper_files/paper/2026/hash/f039f5b34b2c2ae27808cf2a01ac3306-Abstract-Conference.html)
+- (EACL Findings'26) **Harnessing Consistency for Robust Test-Time LLM Ensemble** (CoRE) [[Paper]](https://aclanthology.org/2026.findings-eacl.182/)
 
 ## 💡 Overview
 
